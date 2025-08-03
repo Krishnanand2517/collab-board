@@ -1,7 +1,12 @@
+import { Outlet } from "react-router-dom";
+
 const App = () => {
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-amber-500">Hey there!</h1>
+    <div className="bg-neutral-950 text-white/90 min-h-screen p-6 md:py-10 md:px-20 lg:px-52 2xl:px-80">
+      <h1 className="text-2xl font-semibold text-amber-500">
+        Navbar in progress...
+      </h1>
+      <Outlet />
     </div>
   );
 };
