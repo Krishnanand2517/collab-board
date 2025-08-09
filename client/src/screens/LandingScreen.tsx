@@ -35,7 +35,10 @@ const LandingScreen = () => {
       <div
         className="absolute inset-0 opacity-30"
         style={{
-          background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(245, 158, 11, 0.15) 0%, transparent 50%)`,
+          background: `
+            linear-gradient(to bottom, transparent 0%, transparent 60%, rgb(10, 10, 10) 90%, rgb(10, 10, 10) 100%),
+            radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(245, 158, 11, 0.15) 0%, transparent 50%)
+          `,
         }}
       />
 
@@ -44,8 +47,12 @@ const LandingScreen = () => {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: `linear-gradient(rgba(245, 158, 11, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(245, 158, 11, 0.1) 1px, transparent 1px)`,
-            backgroundSize: "50px 50px",
+            backgroundImage: `
+        linear-gradient(to bottom, transparent 0%, transparent 60%, rgb(10, 10, 10) 90%, rgb(10, 10, 10) 100%),
+        linear-gradient(rgba(245, 158, 11, 0.25) 1px, transparent 1px), 
+        linear-gradient(90deg, rgba(245, 158, 11, 0.25) 1px, transparent 1px)
+      `,
+            backgroundSize: "100% 100%, 50px 50px, 50px 50px",
           }}
         />
       </div>
@@ -67,14 +74,17 @@ const LandingScreen = () => {
 
         <div className="hidden md:flex items-center space-x-8">
           <a
-            href="#features"
+            href="/login"
             className="text-white/70 hover:text-amber-400 font-medium transition-colors duration-300"
           >
             Login
           </a>
-          <button className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 rounded-lg font-medium hover:from-amber-400 hover:to-orange-400 transition-all duration-300 transform hover:scale-105">
+          <a
+            href="/signup"
+            className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 rounded-lg font-medium hover:from-amber-400 hover:to-orange-400 transition-all duration-300 transform hover:scale-105"
+          >
             Get Started
-          </button>
+          </a>
         </div>
       </nav>
 
@@ -172,15 +182,15 @@ const LandingScreen = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:border-amber-500/30 transition-all duration-500 hover:bg-white/5"
+              className="group bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-start text-center hover:border-amber-500/30 transition-all duration-500 hover:bg-white/5 h-full min-h-[280px]"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold text-white mb-4">
+              <h3 className="text-xl font-semibold text-white mb-4 flex-shrink-0">
                 {feature.title}
               </h3>
-              <p className="text-white/60 leading-relaxed">
+              <p className="text-white/60 leading-relaxed flex-grow">
                 {feature.description}
               </p>
             </div>
@@ -203,12 +213,12 @@ const LandingScreen = () => {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-amber-500/30 transition-all duration-500 flex flex-col justify-between"
+              className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-amber-500/30 transition-all duration-500 flex flex-col justify-between h-full min-h-[200px]"
             >
-              <p className="text-white/80 mb-6 italic">
+              <p className="text-white/80 mb-6 italic flex-grow">
                 "{testimonial.content}"
               </p>
-              <div className="flex items-center">
+              <div className="flex items-center flex-shrink-0">
                 <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
                   {testimonial.avatar}
                 </div>

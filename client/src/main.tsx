@@ -6,6 +6,8 @@ import App from "./App.tsx";
 import DashboardScreen from "./screens/DashboardScreen.tsx";
 import LandingScreen from "./screens/LandingScreen.tsx";
 import WorkScreen from "./screens/WorkScreen.tsx";
+import LoginScreen from "./screens/LoginScreen.tsx";
+import SignupScreen from "./screens/SignupScreen.tsx";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
       {
         path: "/board/:boardId",
         element: <WorkScreen />,
+      },
+      {
+        path: "/login",
+        element: <LoginScreen />,
+      },
+      {
+        path: "/signup",
+        element: <SignupScreen />,
       },
     ],
   },
