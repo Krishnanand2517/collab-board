@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
-import {
-  Eye,
-  EyeOff,
-  Sparkles,
-  ArrowRight,
-  Mail,
-  Lock,
-  Github,
-  Chrome,
-} from "lucide-react";
+import { Eye, EyeOff, Sparkles, ArrowRight, Mail, Lock } from "lucide-react";
+
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa6";
 
 const LoginScreen = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -203,7 +197,7 @@ const LoginScreen = () => {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-white/10"></div>
                 </div>
-                <div className="relative flex justify-center text-sm text-center font-medium">
+                <div className="relative flex justify-center text-sm text-center font-medium text-white/40">
                   <span>
                     or
                     <br /> continue with
@@ -214,14 +208,14 @@ const LoginScreen = () => {
 
             {/* Social Login Buttons */}
             <div className="grid grid-cols-2 gap-4">
-              <button className="flex items-center justify-center px-4 py-3 bg-white/5 border border-white/20 rounded-xl hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-                <Github className="w-5 h-5 mr-2 text-white/70 group-hover:text-white transition-colors duration-300" />
+              <button className="flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/20 rounded-xl hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
+                <FaGithub size={32} />
                 <span className="text-white/70 group-hover:text-white transition-colors duration-300">
                   GitHub
                 </span>
               </button>
-              <button className="flex items-center justify-center px-4 py-3 bg-white/5 border border-white/20 rounded-xl hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-                <Chrome className="w-5 h-5 mr-2 text-white/70 group-hover:text-white transition-colors duration-300" />
+              <button className="flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/20 rounded-xl hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
+                <FcGoogle size={32} />
                 <span className="text-white/70 group-hover:text-white transition-colors duration-300">
                   Google
                 </span>
