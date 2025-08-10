@@ -40,6 +40,8 @@ const LoginScreen = () => {
     console.log("Login attempt:", formData);
   };
 
+  const isFormValid = formData.email && formData.password;
+
   return (
     <div className="fixed inset-0 bg-neutral-950 text-white/90 overflow-y-auto overflow-x-hidden">
       {/* Animated Background */}
@@ -184,7 +186,14 @@ const LoginScreen = () => {
               {/* Log In Button */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 rounded-xl font-semibold text-lg hover:from-amber-400 hover:to-orange-400 transition-all duration-300 cursor-pointer transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/25 group"
+                disabled={!isFormValid}
+                className={`w-full px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform
+                  ${
+                    isFormValid
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 cursor-pointer hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/25"
+                      : "bg-gray-500 cursor-not-allowed opacity-50"
+                  }
+                `}
               >
                 Log In
                 <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
