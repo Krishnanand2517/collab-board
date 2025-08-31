@@ -1,7 +1,13 @@
+import { useParams } from "react-router-dom";
+import { Tldraw } from "tldraw";
+import "tldraw/tldraw.css";
+
 const WorkScreen = () => {
+  const { boardId } = useParams();
+
   return (
-    <div>
-      <h1 className="text-lg">Work Screen</h1>
+    <div className="fixed inset-0">
+      <Tldraw persistenceKey={boardId || "collabboardpersistence"} />
     </div>
   );
 };

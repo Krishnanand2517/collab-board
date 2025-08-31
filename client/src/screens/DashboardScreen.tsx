@@ -3,6 +3,11 @@ import { Sparkles, PlusCircle } from "lucide-react";
 import Footer from "../components/Footer";
 
 const DashboardScreen = () => {
+  const handleNewClick = () => {
+    const uuid = crypto.randomUUID();
+    window.location.href = `/board/${uuid}`;
+  };
+
   return (
     <div className="fixed inset-0 bg-neutral-950 text-white/90 overflow-y-auto overflow-x-hidden">
       <div className="px-6 md:px-20 lg:px-52 2xl:px-80">
@@ -42,7 +47,10 @@ const DashboardScreen = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* --- New Workspace --- */}
-              <div className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900">
+              <div
+                onClick={handleNewClick}
+                className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
+              >
                 <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400" />
                 <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
                   New Workspace
@@ -72,9 +80,12 @@ const DashboardScreen = () => {
               Team Workspaces
             </h2>
 
-            {/* --- New Workspace --- */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900">
+              {/* --- New Workspace --- */}
+              <div
+                onClick={handleNewClick}
+                className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
+              >
                 <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400" />
                 <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
                   New Workspace
