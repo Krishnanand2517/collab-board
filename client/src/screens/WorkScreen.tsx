@@ -1,13 +1,12 @@
 import { useParams } from "react-router-dom";
-import { Tldraw } from "tldraw";
-import "tldraw/tldraw.css";
+import Workspace from "../components/Workspace";
 
 const WorkScreen = () => {
   const { boardId } = useParams();
 
   return (
     <div className="fixed inset-0">
-      <Tldraw persistenceKey={boardId || "collabboardpersistence"} />
+      <Workspace boardId={boardId} />
     </div>
   );
 };
