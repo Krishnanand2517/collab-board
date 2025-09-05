@@ -22,49 +22,71 @@ import type { WorkspaceType } from "../types";
 
 const CustomContextMenu = (props: TLUiContextMenuProps) => {
   const actions = useActions();
-  const myAction = actions["save-workspace"];
+  const saveAction = actions["save-workspace"];
+  const exitAction = actions["exit-workspace"];
 
   return (
     <DefaultContextMenu {...props}>
-      <TldrawUiMenuGroup id="custom-group">
+      <TldrawUiMenuGroup id="top-group">
         <TldrawUiMenuItem
-          id={myAction.id}
-          label={myAction.label}
-          kbd={myAction.kbd}
+          id={saveAction.id}
+          label={saveAction.label}
+          kbd={saveAction.kbd}
           icon="blob"
-          readonlyOk={myAction.readonlyOk}
-          onSelect={myAction.onSelect}
+          readonlyOk={saveAction.readonlyOk}
+          onSelect={saveAction.onSelect}
         />
       </TldrawUiMenuGroup>
+
       <DefaultContextMenuContent />
+
+      <TldrawUiMenuGroup id="bottom-group">
+        <TldrawUiMenuItem
+          id={exitAction.id}
+          label={exitAction.label}
+          icon="exit"
+          readonlyOk={exitAction.readonlyOk}
+          onSelect={exitAction.onSelect}
+        />
+      </TldrawUiMenuGroup>
     </DefaultContextMenu>
   );
 };
 
 const CustomMainMenu = () => {
   const actions = useActions();
-  const myAction = actions["save-workspace"];
+  const saveAction = actions["save-workspace"];
+  const exitAction = actions["exit-workspace"];
 
   return (
     <DefaultMainMenu>
-      <TldrawUiMenuGroup id="custom-group">
+      <TldrawUiMenuGroup id="top-group">
         <TldrawUiMenuItem
-          id={myAction.id}
-          label={myAction.label}
-          kbd={myAction.kbd}
+          id={saveAction.id}
+          label={saveAction.label}
+          kbd={saveAction.kbd}
           icon="blob"
-          readonlyOk={myAction.readonlyOk}
-          onSelect={myAction.onSelect}
+          readonlyOk={saveAction.readonlyOk}
+          onSelect={saveAction.onSelect}
         />
       </TldrawUiMenuGroup>
+
       <DefaultMainMenuContent />
+
+      <TldrawUiMenuGroup id="bottom-group">
+        <TldrawUiMenuItem
+          id={exitAction.id}
+          label={exitAction.label}
+          icon="exit"
+          readonlyOk={exitAction.readonlyOk}
+          onSelect={exitAction.onSelect}
+        />
+      </TldrawUiMenuGroup>
     </DefaultMainMenu>
   );
 };
 
 const Workspace = ({ boardId }: { boardId: string }) => {
-  // const editor = useEditor();
-
   const getWorkspaceImage = async (editor: Editor) => {
     const shapeIds = editor.getCurrentPageShapeIds();
     if (shapeIds.size === 0) return alert("No shapes on the canvas");
@@ -136,7 +158,7 @@ const Workspace = ({ boardId }: { boardId: string }) => {
       const filteredActions = { ...actions };
       actionsToDelete.forEach((action) => delete filteredActions[action]);
 
-      const myCustomAction: TLUiActionItem = {
+      const saveAction: TLUiActionItem = {
         id: "save-workspace",
         label: "Save",
         icon: "blob",
@@ -157,9 +179,26 @@ const Workspace = ({ boardId }: { boardId: string }) => {
         },
       };
 
+      const exitAction: TLUiActionItem = {
+        id: "exit-workspace",
+        label: "Save & Exit",
+        icon: "exit",
+        readonlyOk: true,
+        async onSelect() {
+          const success = await onSaveWorkspace(editor);
+          if (success) window.location.href = "/dashboard";
+          else
+            helpers.addToast({
+              title: "Failed",
+              description: "Couldn't save the workspace",
+            });
+        },
+      };
+
       const newActions: TLUiActionsContextType = {
         ...filteredActions,
-        "save-workspace": myCustomAction,
+        "save-workspace": saveAction,
+        "exit-workspace": exitAction,
       };
 
       return newActions;
