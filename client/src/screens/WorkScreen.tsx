@@ -6,7 +6,7 @@ const WorkScreen = () => {
 
   return (
     <div className="fixed inset-0">
-      <Workspace boardId={boardId} />
+      <Workspace boardId={boardId || "collabboardpersistence"} />
     </div>
   );
 };

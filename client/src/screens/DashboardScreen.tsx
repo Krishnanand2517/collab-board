@@ -1,11 +1,26 @@
+import { useEffect, useState } from "react";
 import { Sparkles, PlusCircle } from "lucide-react";
 
 import Footer from "../components/Footer";
+import type { WorkspaceType } from "../types";
 
 const DashboardScreen = () => {
+  const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
+
+  useEffect(() => {
+    const storedWorkspaces = localStorage.getItem("collabboard_workspaces");
+    if (storedWorkspaces) {
+      setWorkspaces(JSON.parse(storedWorkspaces));
+    }
+  }, []);
+
   const handleNewClick = () => {
     const uuid = crypto.randomUUID();
     window.location.href = `/board/${uuid}`;
+  };
+
+  const onLoadWorkspace = (workspace: WorkspaceType) => {
+    window.location.href = `/board/${workspace.id}`;
   };
 
   return (
@@ -57,20 +72,41 @@ const DashboardScreen = () => {
                 </span>
               </div>
 
-              {/* --- Example Workspace --- */}
-              <div className="group flex h-52 cursor-pointer flex-col justify-between rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:bg-neutral-900">
-                <div>
-                  <h3 className="text-xl font-bold text-white">
-                    Project Phoenix
-                  </h3>
-                  <p className="mt-2 text-sm text-neutral-400">
-                    Marketing assets and brand guidelines for the new launch.
-                  </p>
+              {/* --- Saved Personal Workspaces --- */}
+              {workspaces.map((workspace) => (
+                <div
+                  key={workspace.id}
+                  onClick={() => onLoadWorkspace(workspace)}
+                  className="group flex h-52 cursor-pointer flex-col overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/50 transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:bg-neutral-900"
+                >
+                  {/* --- Image Container --- */}
+                  <div className="relative h-3/5 overflow-hidden">
+                    <img
+                      src={workspace.previewImg}
+                      alt={workspace.name || "Workspace preview"}
+                      className="block h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent"></div>
+                  </div>
+
+                  {/* --- Text Content --- */}
+                  <div className="flex h-2/5 flex-col justify-between p-4">
+                    <h3 className="font-bold text-white truncate">
+                      {workspace.name || "Sample Workspace"}
+                    </h3>
+                    <p className="text-xs text-neutral-500">
+                      Last updated:{" "}
+                      {new Date(workspace.updatedAt).toLocaleString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-xs text-neutral-500">
-                  Last updated: 3 hours ago
-                </p>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -90,36 +126,6 @@ const DashboardScreen = () => {
                 <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
                   New Workspace
                 </span>
-              </div>
-
-              {/* --- Example Workspace --- */}
-              <div className="group flex h-52 cursor-pointer flex-col justify-between rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:bg-neutral-900">
-                <div>
-                  <h3 className="text-xl font-bold text-white">
-                    Q4 Engineering Sprint
-                  </h3>
-                  <p className="mt-2 text-sm text-neutral-400">
-                    All tasks and documentation related to the upcoming release.
-                  </p>
-                </div>
-                <p className="text-xs text-neutral-500">
-                  Last updated: 1 day ago
-                </p>
-              </div>
-
-              {/* --- Example Workspace --- */}
-              <div className="group flex h-52 cursor-pointer flex-col justify-between rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:bg-neutral-900">
-                <div>
-                  <h3 className="text-xl font-bold text-white">
-                    Design System
-                  </h3>
-                  <p className="mt-2 text-sm text-neutral-400">
-                    Central repository for all UI components and style guides.
-                  </p>
-                </div>
-                <p className="text-xs text-neutral-500">
-                  Last updated: 5 days ago
-                </p>
               </div>
             </div>
           </div>

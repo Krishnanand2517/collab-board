@@ -22,8 +22,6 @@ export const actionsToDelete = [
   "bring-forward",
   "send-backward",
   "send-to-back",
-  "rotate-cw",
-  "rotate-ccw",
   "unlock-all",
   "toggle-tool-lock",
   "toggle-debug-mode",
