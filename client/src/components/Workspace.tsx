@@ -136,6 +136,13 @@ const Workspace = ({ boardId }: { boardId: string }) => {
       storedWorkspaces[existingWorkspaceIndex] = workspaceToSave;
     } else {
       // create new workspace
+
+      const name = prompt(
+        "What would you like to name this new workspace?",
+        "Untitled Workspace"
+      );
+      if (!name) return false;
+
       workspaceToSave = {
         id: boardId,
         snapshot: documentString,

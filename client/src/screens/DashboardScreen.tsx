@@ -3,9 +3,11 @@ import { Sparkles, PlusCircle } from "lucide-react";
 
 import Footer from "../components/Footer";
 import type { WorkspaceType } from "../types";
+import NewWorkspaceModal from "../components/NewWorkspaceModal";
 
 const DashboardScreen = () => {
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const storedWorkspaces = localStorage.getItem("collabboard_workspaces");
@@ -14,9 +16,30 @@ const DashboardScreen = () => {
     }
   }, []);
 
-  const handleNewClick = () => {
-    const uuid = crypto.randomUUID();
-    window.location.href = `/board/${uuid}`;
+  const handleNewClick = (name: string) => {
+    const now = new Date().toISOString();
+    const newWorkspace: WorkspaceType = {
+      id: crypto.randomUUID(),
+      name: name,
+      snapshot: "",
+      previewImg: "",
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const storedWorkspacesStr = localStorage.getItem("collabboard_workspaces");
+    const storedWorkspaces: WorkspaceType[] = storedWorkspacesStr
+      ? JSON.parse(storedWorkspacesStr)
+      : [];
+
+    storedWorkspaces.push(newWorkspace);
+    localStorage.setItem(
+      "collabboard_workspaces",
+      JSON.stringify(storedWorkspaces)
+    );
+
+    setIsModalOpen(false);
+    window.location.href = `/board/${newWorkspace.id}`;
   };
 
   const onLoadWorkspace = (workspace: WorkspaceType) => {
@@ -63,7 +86,7 @@ const DashboardScreen = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* --- New Workspace --- */}
               <div
-                onClick={handleNewClick}
+                onClick={() => setIsModalOpen(true)}
                 className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
               >
                 <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400" />
@@ -119,7 +142,7 @@ const DashboardScreen = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* --- New Workspace --- */}
               <div
-                onClick={handleNewClick}
+                onClick={() => setIsModalOpen(true)}
                 className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
               >
                 <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400" />
@@ -130,6 +153,12 @@ const DashboardScreen = () => {
             </div>
           </div>
         </main>
+
+        <NewWorkspaceModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onCreate={handleNewClick}
+        />
       </div>
 
       <Footer />
