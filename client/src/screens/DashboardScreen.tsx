@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Sparkles, PlusCircle } from "lucide-react";
 
 import Footer from "../components/Footer";
-import type { WorkspaceType } from "../types";
+import type { WorkspaceScope, WorkspaceType } from "../types";
 import NewWorkspaceModal from "../components/NewWorkspaceModal";
 
 const DashboardScreen = () => {
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
+
+  const [currentScope, setCurrentScope] = useState<WorkspaceScope>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -17,10 +19,13 @@ const DashboardScreen = () => {
   }, []);
 
   const handleNewClick = (name: string) => {
+    if (!currentScope) return;
+
     const now = new Date().toISOString();
     const newWorkspace: WorkspaceType = {
       id: crypto.randomUUID(),
       name: name,
+      scope: currentScope,
       snapshot: "",
       previewImg: "",
       createdAt: now,
@@ -40,6 +45,16 @@ const DashboardScreen = () => {
 
     setIsModalOpen(false);
     window.location.href = `/board/${newWorkspace.id}`;
+  };
+
+  const handleNewPersonalClick = () => {
+    setIsModalOpen(true);
+    setCurrentScope("personal");
+  };
+
+  const handleNewTeamClick = () => {
+    setIsModalOpen(true);
+    setCurrentScope("team");
   };
 
   const onLoadWorkspace = (workspace: WorkspaceType) => {
@@ -86,7 +101,7 @@ const DashboardScreen = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* --- New Workspace --- */}
               <div
-                onClick={() => setIsModalOpen(true)}
+                onClick={handleNewPersonalClick}
                 className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
               >
                 <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400" />
@@ -96,40 +111,42 @@ const DashboardScreen = () => {
               </div>
 
               {/* --- Saved Personal Workspaces --- */}
-              {workspaces.map((workspace) => (
-                <div
-                  key={workspace.id}
-                  onClick={() => onLoadWorkspace(workspace)}
-                  className="group flex h-52 cursor-pointer flex-col overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/50 transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:bg-neutral-900"
-                >
-                  {/* --- Image Container --- */}
-                  <div className="relative h-3/5 overflow-hidden">
-                    <img
-                      src={workspace.previewImg}
-                      alt={workspace.name || "Workspace preview"}
-                      className="block h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent"></div>
-                  </div>
+              {workspaces
+                .filter((workspace) => workspace.scope == "personal")
+                .map((workspace) => (
+                  <div
+                    key={workspace.id}
+                    onClick={() => onLoadWorkspace(workspace)}
+                    className="group flex h-52 cursor-pointer flex-col overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/50 transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:bg-neutral-900"
+                  >
+                    {/* --- Image Container --- */}
+                    <div className="relative h-3/5 overflow-hidden">
+                      <img
+                        src={workspace.previewImg}
+                        alt={workspace.name || "Workspace preview"}
+                        className="block h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent"></div>
+                    </div>
 
-                  {/* --- Text Content --- */}
-                  <div className="flex h-2/5 flex-col justify-between p-4">
-                    <h3 className="font-bold text-white truncate">
-                      {workspace.name || "Sample Workspace"}
-                    </h3>
-                    <p className="text-xs text-neutral-500">
-                      Last updated:{" "}
-                      {new Date(workspace.updatedAt).toLocaleString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
+                    {/* --- Text Content --- */}
+                    <div className="flex h-2/5 flex-col justify-between p-4">
+                      <h3 className="font-bold text-white truncate">
+                        {workspace.name || "Sample Workspace"}
+                      </h3>
+                      <p className="text-xs text-neutral-500">
+                        Last updated:{" "}
+                        {new Date(workspace.updatedAt).toLocaleString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
@@ -142,7 +159,7 @@ const DashboardScreen = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* --- New Workspace --- */}
               <div
-                onClick={() => setIsModalOpen(true)}
+                onClick={handleNewTeamClick}
                 className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
               >
                 <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400" />
@@ -150,6 +167,44 @@ const DashboardScreen = () => {
                   New Workspace
                 </span>
               </div>
+
+              {/* --- Saved Team Workspaces --- */}
+              {workspaces
+                .filter((workspace) => workspace.scope == "team")
+                .map((workspace) => (
+                  <div
+                    key={workspace.id}
+                    onClick={() => onLoadWorkspace(workspace)}
+                    className="group flex h-52 cursor-pointer flex-col overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/50 transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:bg-neutral-900"
+                  >
+                    {/* --- Image Container --- */}
+                    <div className="relative h-3/5 overflow-hidden">
+                      <img
+                        src={workspace.previewImg}
+                        alt={workspace.name || "Workspace preview"}
+                        className="block h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/20 to-transparent"></div>
+                    </div>
+
+                    {/* --- Text Content --- */}
+                    <div className="flex h-2/5 flex-col justify-between p-4">
+                      <h3 className="font-bold text-white truncate">
+                        {workspace.name || "Sample Workspace"}
+                      </h3>
+                      <p className="text-xs text-neutral-500">
+                        Last updated:{" "}
+                        {new Date(workspace.updatedAt).toLocaleString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </main>
