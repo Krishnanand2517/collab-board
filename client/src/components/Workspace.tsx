@@ -19,6 +19,7 @@ import "tldraw/tldraw.css";
 
 import { actionsToDelete } from "../data/whiteboard";
 import type { WorkspaceType } from "../types";
+import supabase from "../db/supabaseClient";
 
 const CustomContextMenu = (props: TLUiContextMenuProps) => {
   const actions = useActions();
@@ -135,28 +136,33 @@ const Workspace = ({ boardId }: { boardId: string }) => {
       };
       storedWorkspaces[existingWorkspaceIndex] = workspaceToSave;
     } else {
-      // create new workspace
-
-      const name = prompt(
-        "What would you like to name this new workspace?",
-        "Untitled Workspace"
-      );
-      if (!name) return false;
-
-      workspaceToSave = {
-        id: boardId,
-        snapshot: documentString,
-        previewImg: previewImgUrl,
-        createdAt: now,
-        updatedAt: now,
-      };
-      storedWorkspaces.push(workspaceToSave);
+      return false;
     }
 
     localStorage.setItem(
       "collabboard_workspaces",
       JSON.stringify(storedWorkspaces)
     );
+
+    const { error } = await supabase.from("workspaces").upsert(
+      [
+        {
+          id: boardId,
+          name: workspaceToSave.name,
+          scope: workspaceToSave.scope,
+          snapshot: workspaceToSave.snapshot,
+          preview_img: workspaceToSave.previewImg,
+        },
+      ],
+      {
+        onConflict: "id",
+      }
+    );
+    if (error) {
+      console.error("Error inserting workspace:", error);
+      return false;
+    }
+
     return true;
   };
 
