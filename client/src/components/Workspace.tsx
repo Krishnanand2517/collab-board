@@ -18,7 +18,6 @@ import {
 import "tldraw/tldraw.css";
 
 import { actionsToDelete } from "../data/whiteboard";
-import type { WorkspaceType } from "../types";
 import supabase from "../db/supabaseClient";
 
 const CustomContextMenu = (props: TLUiContextMenuProps) => {
@@ -113,45 +112,15 @@ const Workspace = ({ boardId }: { boardId: string }) => {
     const previewImgUrl = await getWorkspaceImage(editor);
     if (!previewImgUrl) return false;
 
-    const storedWorkspacesStr = localStorage.getItem("collabboard_workspaces");
     const now = new Date().toISOString();
-    let workspaceToSave: WorkspaceType;
-
-    const storedWorkspaces: WorkspaceType[] = storedWorkspacesStr
-      ? JSON.parse(storedWorkspacesStr)
-      : [];
-
-    const existingWorkspaceIndex =
-      storedWorkspaces.length > 0
-        ? storedWorkspaces.findIndex((ws) => ws.id === boardId)
-        : -1;
-
-    if (existingWorkspaceIndex > -1) {
-      // update existing workspace
-      workspaceToSave = {
-        ...storedWorkspaces[existingWorkspaceIndex],
-        snapshot: documentString,
-        previewImg: previewImgUrl,
-        updatedAt: now,
-      };
-      storedWorkspaces[existingWorkspaceIndex] = workspaceToSave;
-    } else {
-      return false;
-    }
-
-    localStorage.setItem(
-      "collabboard_workspaces",
-      JSON.stringify(storedWorkspaces)
-    );
 
     const { error } = await supabase.from("workspaces").upsert(
       [
         {
           id: boardId,
-          name: workspaceToSave.name,
-          scope: workspaceToSave.scope,
-          snapshot: workspaceToSave.snapshot,
-          preview_img: workspaceToSave.previewImg,
+          snapshot: documentString,
+          preview_img: previewImgUrl,
+          updated_at: now,
         },
       ],
       {

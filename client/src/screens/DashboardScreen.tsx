@@ -4,6 +4,7 @@ import { Sparkles, PlusCircle } from "lucide-react";
 import Footer from "../components/Footer";
 import type { WorkspaceScope, WorkspaceType } from "../types";
 import NewWorkspaceModal from "../components/NewWorkspaceModal";
+import supabase from "../db/supabaseClient";
 
 const DashboardScreen = () => {
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
@@ -12,39 +13,58 @@ const DashboardScreen = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const storedWorkspaces = localStorage.getItem("collabboard_workspaces");
-    if (storedWorkspaces) {
-      setWorkspaces(JSON.parse(storedWorkspaces));
-    }
+    const loadAllWorkspaces = async () => {
+      const { data, error } = await supabase.from("workspaces").select();
+
+      if (error) {
+        console.error("Error loading workspaces:", error);
+        return;
+      }
+
+      const fetchedWorkspaces: WorkspaceType[] = [];
+      data.map((ws) => {
+        fetchedWorkspaces.push({
+          name: ws.name,
+          id: ws.id,
+          previewImg: ws.preview_img,
+          scope: ws.scope,
+          snapshot: ws.snapshot,
+          updatedAt: ws.updated_at,
+          createdAt: ws.created_at,
+        });
+      });
+
+      setWorkspaces(fetchedWorkspaces);
+    };
+
+    loadAllWorkspaces();
   }, []);
 
-  const handleNewClick = (name: string) => {
+  const handleNewClick = async (name: string) => {
     if (!currentScope) return;
 
     const now = new Date().toISOString();
-    const newWorkspace: WorkspaceType = {
-      id: crypto.randomUUID(),
-      name: name,
-      scope: currentScope,
-      snapshot: "",
-      previewImg: "",
-      createdAt: now,
-      updatedAt: now,
-    };
+    const newBoardId = crypto.randomUUID();
 
-    const storedWorkspacesStr = localStorage.getItem("collabboard_workspaces");
-    const storedWorkspaces: WorkspaceType[] = storedWorkspacesStr
-      ? JSON.parse(storedWorkspacesStr)
-      : [];
+    const { error } = await supabase.from("workspaces").insert([
+      {
+        id: newBoardId,
+        name: name,
+        scope: currentScope,
+        snapshot: "",
+        preview_img: "",
+        created_at: now,
+        updated_at: now,
+      },
+    ]);
 
-    storedWorkspaces.push(newWorkspace);
-    localStorage.setItem(
-      "collabboard_workspaces",
-      JSON.stringify(storedWorkspaces)
-    );
+    if (error) {
+      console.error("Error inserting workspace:", error);
+      return;
+    }
 
     setIsModalOpen(false);
-    window.location.href = `/board/${newWorkspace.id}`;
+    window.location.href = `/board/${newBoardId}`;
   };
 
   const handleNewPersonalClick = () => {
