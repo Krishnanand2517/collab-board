@@ -68,6 +68,25 @@ const DashboardScreen = () => {
     window.location.href = `/board/${newBoardId}`;
   };
 
+  const handleRenameWorkspace = async (id: string, newName: string) => {
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from("workspaces")
+      .update({ name: newName, updated_at: now })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error renaming workspace:", error);
+      return;
+    }
+
+    setWorkspaces((prevWorkspaces) =>
+      prevWorkspaces.map((ws) =>
+        ws.id === id ? { ...ws, name: newName, updatedAt: now } : ws
+      )
+    );
+  };
+
   const handleNewPersonalClick = () => {
     setIsModalOpen(true);
     setCurrentScope("personal");
@@ -138,6 +157,7 @@ const DashboardScreen = () => {
                   <WorkspaceCard
                     workspace={workspace}
                     onLoadWorkspace={onLoadWorkspace}
+                    onRename={handleRenameWorkspace}
                     key={workspace.id}
                   />
                 ))}
@@ -169,6 +189,7 @@ const DashboardScreen = () => {
                   <WorkspaceCard
                     workspace={workspace}
                     onLoadWorkspace={onLoadWorkspace}
+                    onRename={handleRenameWorkspace}
                     key={workspace.id}
                   />
                 ))}
