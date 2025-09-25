@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
 import App from "./App.tsx";
+import { AuthProvider } from "./auth/AuthProvider.tsx";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import DashboardScreen from "./screens/DashboardScreen.tsx";
 import LandingScreen from "./screens/LandingScreen.tsx";
 import WorkScreen from "./screens/WorkScreen.tsx";
@@ -20,11 +22,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: <DashboardScreen />,
+        element: (
+          <ProtectedRoute>
+            <DashboardScreen />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/board/:boardId",
-        element: <WorkScreen />,
+        element: (
+          <ProtectedRoute>
+            <WorkScreen />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/login",
@@ -39,5 +49,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={router} />
+  <AuthProvider>
+    <RouterProvider router={router} />
+  </AuthProvider>
 );

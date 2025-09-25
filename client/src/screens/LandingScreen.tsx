@@ -116,10 +116,13 @@ const LandingScreen = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-          <button className="bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 rounded-xl font-semibold text-lg hover:from-amber-400 hover:to-orange-400 transition-all duration-300 cursor-pointer hover:shadow-2xl hover:shadow-amber-500/25 group">
+          <a
+            href="/signup"
+            className="bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 rounded-xl font-semibold text-lg hover:from-amber-400 hover:to-orange-400 transition-all duration-300 cursor-pointer hover:shadow-2xl hover:shadow-amber-500/25 group"
+          >
             Start Collaborating
             <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
-          </button>
+          </a>
           <button className="border border-white/20 px-8 py-4 rounded-xl font-semibold text-lg hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 cursor-pointer group">
             <Play className="w-5 h-5 mr-2 inline-block" />
             Watch Demo
