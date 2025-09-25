@@ -1,17 +1,28 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Sparkles, ArrowRight, Mail, Lock } from "lucide-react";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa6";
+import { useAuth } from "../auth/useAuth";
 
 const LoginScreen = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/dashboard";
 
   useEffect(() => {
     setIsVisible(true);
@@ -34,10 +45,25 @@ const LoginScreen = () => {
     });
   };
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login attempt:", formData);
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const { error } = await signIn(formData.email, formData.password);
+
+      if (error) {
+        setError(error.message);
+      } else {
+        navigate(from, { replace: true });
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const isFormValid = formData.email && formData.password;
@@ -183,19 +209,26 @@ const LoginScreen = () => {
                 </a>
               </div>
 
+              {/* Error message */}
+              {error && (
+                <div className="text-center text-sm text-red-700 font-medium">
+                  {error}
+                </div>
+              )}
+
               {/* Log In Button */}
               <button
                 type="submit"
-                disabled={!isFormValid}
+                disabled={isLoading || !isFormValid}
                 className={`w-full px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform
                   ${
-                    isFormValid
+                    isFormValid && !isLoading
                       ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 cursor-pointer hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/25"
                       : "bg-gray-500 cursor-not-allowed opacity-50"
                   }
                 `}
               >
-                Log In
+                {isLoading ? "Loading..." : "Log In"}
                 <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </form>
