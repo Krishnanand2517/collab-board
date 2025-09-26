@@ -85,27 +85,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       options: { data: { name } },
     });
 
-    // if signup successful, create profile
-    if (response.data.user && !response.error) {
-      const { error: profileError } = await supabase.from("profiles").insert([
-        {
-          id: response.data.user.id,
-          name,
-          email,
-        },
-      ]);
-
-      if (profileError) {
-        console.error("Error creating user profile:", profileError);
-      }
-    }
-
     return response;
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUserProfile(null);
+    try {
+      setLoading(true);
+      await supabase.auth.signOut();
+      setUser(null);
+      setUserProfile(null);
+      setSession(null);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const verifyOtp = async (email: string, token: string) => {
