@@ -228,7 +228,7 @@ const LoginScreen = () => {
                   }
                 `}
               >
-                {isLoading ? "Loading..." : "Log In"}
+                {isLoading ? "Logging in..." : "Log In"}
                 <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </form>

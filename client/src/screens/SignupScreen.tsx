@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Eye,
   EyeOff,
@@ -12,10 +13,14 @@ import {
 
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa6";
+import { useAuth } from "../auth/useAuth";
 
 const SignupScreen = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -24,6 +29,9 @@ const SignupScreen = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
@@ -46,10 +54,34 @@ const SignupScreen = () => {
     });
   };
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Signup attempt:", formData);
+    setIsLoading(true);
+    setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Password and Confirm Passwords must match");
+      return;
+    }
+
+    try {
+      const { error } = await signUp(
+        formData.fullname,
+        formData.email,
+        formData.password
+      );
+
+      if (error) {
+        setError(error.message);
+      } else {
+        navigate("/signup-verify", { state: { email: formData.email } });
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const passwordsMatch =
@@ -255,19 +287,26 @@ const SignupScreen = () => {
                 </div>
               </div>
 
+              {/* Error message */}
+              {error && (
+                <div className="text-center text-sm text-red-700 font-medium">
+                  {error}
+                </div>
+              )}
+
               {/* Sign Up Button */}
               <button
                 type="submit"
-                disabled={!isFormValid}
+                disabled={!isFormValid || isLoading}
                 className={`w-full px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform
                   ${
-                    isFormValid
+                    isFormValid && !isLoading
                       ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 cursor-pointer hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/25"
                       : "bg-gray-500 cursor-not-allowed opacity-50"
                   }
                 `}
               >
-                Sign Up
+                {isLoading ? "Signing up..." : "Sign Up"}
                 <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             </form>
