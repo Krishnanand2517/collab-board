@@ -6,12 +6,18 @@ import type { WorkspaceScope, WorkspaceType } from "../types";
 import NewWorkspaceModal from "../components/NewWorkspaceModal";
 import supabase from "../db/supabaseClient";
 import WorkspaceCard from "../components/WorkspaceCard";
+import { useAuth } from "../auth/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const DashboardScreen = () => {
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [currentScope, setCurrentScope] = useState<WorkspaceScope>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadAllWorkspaces = async () => {
@@ -101,6 +107,17 @@ const DashboardScreen = () => {
     window.location.href = `/board/${workspace.id}`;
   };
 
+  const handleLogout: React.MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+    await signOut();
+    setIsLoading(false);
+    navigate("/login");
+  };
+
   return (
     <div className="fixed inset-0 bg-neutral-950 text-white/90 overflow-y-auto overflow-x-hidden">
       <div className="px-6 md:px-20 lg:px-52 2xl:px-80">
@@ -122,12 +139,13 @@ const DashboardScreen = () => {
             >
               Profile
             </a>
-            <a
-              href="#"
-              className="hover:text-amber-400 transition-colors duration-300"
+            <button
+              disabled={isLoading}
+              onClick={handleLogout}
+              className="cursor-pointer hover:text-amber-400 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Logout
-            </a>
+              {isLoading ? "Logging out..." : "Logout"}
+            </button>
           </div>
         </nav>
 
