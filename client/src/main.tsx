@@ -10,6 +10,7 @@ import LandingScreen from "./screens/LandingScreen.tsx";
 import WorkScreen from "./screens/WorkScreen.tsx";
 import LoginScreen from "./screens/LoginScreen.tsx";
 import SignupScreen from "./screens/SignupScreen.tsx";
+import SignupVerify from "./screens/SignupVerify.tsx";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <SignupScreen />,
+      },
+      {
+        path: "/signup-verify",
+        element: <SignupVerify />,
       },
     ],
   },

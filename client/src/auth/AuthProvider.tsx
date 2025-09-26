@@ -108,6 +108,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUserProfile(null);
   };
 
+  const verifyOtp = async (email: string, token: string) => {
+    const response = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "signup",
+    });
+
+    return response;
+  };
+
+  const resendOtp = async (email: string) => {
+    const response = await supabase.auth.signInWithOtp({ email });
+
+    return response;
+  };
+
   const updateProfile = async (
     updates: Partial<UserProfile>
   ): Promise<UpdateProfileResult> => {
@@ -139,6 +155,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     signIn,
     signUp,
     signOut,
+    verifyOtp,
+    resendOtp,
     updateProfile,
   };
 

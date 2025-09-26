@@ -30,6 +30,8 @@ export interface AuthContextType {
     password: string
   ) => Promise<AuthResponse>;
   signOut: () => Promise<void>;
+  verifyOtp: (email: string, token: string) => Promise<AuthResponse>;
+  resendOtp: (email: string) => Promise<AuthResponse>;
   updateProfile: (
     updates: Partial<UserProfile>
   ) => Promise<UpdateProfileResult>;
