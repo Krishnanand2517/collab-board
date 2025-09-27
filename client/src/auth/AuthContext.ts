@@ -1,5 +1,6 @@
 import type {
   AuthResponse,
+  OAuthResponse,
   PostgrestError,
   Session,
   User,
@@ -29,6 +30,7 @@ export interface AuthContextType {
     email: string,
     password: string
   ) => Promise<AuthResponse>;
+  signInWithProvider: (provider: "google" | "github") => Promise<OAuthResponse>;
   signOut: () => Promise<void>;
   verifyOtp: (email: string, token: string) => Promise<AuthResponse>;
   resendOtp: (email: string) => Promise<AuthResponse>;

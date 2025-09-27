@@ -88,6 +88,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return response;
   };
 
+  const signInWithProvider = async (provider: "google" | "github") => {
+    return await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  };
+
   const signOut = async () => {
     try {
       setLoading(true);
@@ -148,6 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     loading,
     signIn,
     signUp,
+    signInWithProvider,
     signOut,
     verifyOtp,
     resendOtp,

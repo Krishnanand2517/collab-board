@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Sparkles, PlusCircle } from "lucide-react";
 
 import Footer from "../components/Footer";
@@ -7,7 +8,6 @@ import NewWorkspaceModal from "../components/NewWorkspaceModal";
 import supabase from "../db/supabaseClient";
 import WorkspaceCard from "../components/WorkspaceCard";
 import { useAuth } from "../auth/useAuth";
-import { useNavigate } from "react-router-dom";
 
 const DashboardScreen = () => {
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
