@@ -17,40 +17,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     // get initial session
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
+    const init = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
 
-      if (session?.user) {
-        await fetchUserProfile(session.user.id);
+        if (!mounted) return;
+
+        if (error) {
+          console.error("Error getting session:", error);
+        } else {
+          await updateAuthState(data.session);
+        }
+      } catch (error) {
+        console.error("Error in init:", error);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-
-      setLoading(false);
     };
 
-    getSession();
+    const updateAuthState = async (session: Session | null) => {
+      if (!mounted) return;
 
-    // listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        await fetchUserProfile(session.user.id);
+        fetchUserProfile(session.user.id);
       } else {
         setUserProfile(null);
       }
+    };
 
-      setLoading(false);
-    });
+    init();
 
-    return () => subscription.unsubscribe();
+    // listen for auth changes
+    const { data: subscription } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        if (!mounted) return;
+
+        await updateAuthState(session);
+      }
+    );
+
+    return () => {
+      mounted = false;
+      subscription.subscription.unsubscribe();
+    };
   }, []);
 
   const fetchUserProfile = async (userId: string) => {
@@ -68,6 +85,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
