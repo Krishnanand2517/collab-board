@@ -19,6 +19,7 @@ const SignupScreen = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +31,7 @@ const SignupScreen = () => {
     confirmPassword: "",
   });
 
-  const { signUp } = useAuth();
+  const { signUp, signInWithProvider } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,6 +82,24 @@ const SignupScreen = () => {
       console.error(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: "google" | "github") => {
+    setSocialLoading(provider);
+    setError("");
+
+    try {
+      const { error } = await signInWithProvider(provider);
+
+      if (error) {
+        setError(error.message);
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
+      console.error(error);
+    } finally {
+      setSocialLoading(null);
     }
   };
 
@@ -328,16 +347,33 @@ const SignupScreen = () => {
 
             {/* Social Login Buttons */}
             <div className="grid grid-cols-2 gap-4">
-              <button className="flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/20 rounded-xl hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
+              <button
+                onClick={() => handleSocialLogin("github")}
+                disabled={socialLoading !== null}
+                className="flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/20 rounded-xl hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer group"
+              >
                 <FaGithub size={32} />
                 <span className="text-white/70 group-hover:text-white transition-colors duration-300">
-                  GitHub
+                  {socialLoading === "github" ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                  ) : (
+                    "GitHub"
+                  )}
                 </span>
               </button>
-              <button className="flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/20 rounded-xl hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
+
+              <button
+                onClick={() => handleSocialLogin("google")}
+                disabled={socialLoading !== null}
+                className="flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/20 rounded-xl hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer group"
+              >
                 <FcGoogle size={32} />
                 <span className="text-white/70 group-hover:text-white transition-colors duration-300">
-                  Google
+                  {socialLoading === "google" ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                  ) : (
+                    "Google"
+                  )}
                 </span>
               </button>
             </div>
