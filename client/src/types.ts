@@ -8,4 +8,5 @@ export type WorkspaceType = {
   previewImg: string;
   createdAt?: string;
   updatedAt: string;
+  ownerId: string;
 };

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Tldraw,
   type TLUiOverrides,
@@ -14,11 +15,13 @@ import {
   useActions,
   getSnapshot,
   Editor,
+  type TLEditorSnapshot,
 } from "tldraw";
 import "tldraw/tldraw.css";
 
 import { actionsToDelete } from "../data/whiteboard";
 import supabase from "../db/supabaseClient";
+import { useAuth } from "../auth/useAuth";
 
 const CustomContextMenu = (props: TLUiContextMenuProps) => {
   const actions = useActions();
@@ -87,6 +90,55 @@ const CustomMainMenu = () => {
 };
 
 const Workspace = ({ boardId }: { boardId: string }) => {
+  const [snapshot, setSnapshot] = useState<TLEditorSnapshot>();
+  const [loading, setLoading] = useState(false);
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const loadWorkspace = async () => {
+      if (!user?.id || !boardId) return;
+
+      setLoading(true);
+
+      try {
+        const { data: docData, error: docError } = await supabase
+          .from("workspaces")
+          .select("snapshot")
+          .eq("id", boardId)
+          .single();
+
+        if (docError) throw docError;
+
+        const document = docData?.snapshot
+          ? JSON.parse(docData.snapshot)
+          : null;
+
+        const { data: sessionData, error: sessionError } = await supabase
+          .from("workspace_sessions")
+          .select("session")
+          .eq("workspace_id", boardId)
+          .eq("user_id", user.id)
+          .single();
+
+        if (sessionError && sessionError.code !== "PGRST116") {
+          // PGRST116 = no rows found, okay to ignore
+          throw sessionError;
+        }
+
+        const session = sessionData?.session ?? null;
+
+        setSnapshot({ document: document ?? {}, session: session ?? {} });
+      } catch (err) {
+        console.error("Failed to load workspace:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWorkspace();
+  }, [boardId, user?.id]);
+
   const getWorkspaceImage = async (editor: Editor) => {
     const shapeIds = editor.getCurrentPageShapeIds();
     if (shapeIds.size === 0) return alert("No shapes on the canvas");
@@ -106,7 +158,11 @@ const Workspace = ({ boardId }: { boardId: string }) => {
   };
 
   const onSaveWorkspace = async (editor: Editor) => {
-    const { document } = getSnapshot(editor.store);
+    if (!user) {
+      throw new Error("No user found");
+    }
+
+    const { document, session } = getSnapshot(editor.store);
     const documentString = JSON.stringify(document);
 
     const previewImgUrl = await getWorkspaceImage(editor);
@@ -114,10 +170,11 @@ const Workspace = ({ boardId }: { boardId: string }) => {
 
     const now = new Date().toISOString();
 
-    const { error } = await supabase.from("workspaces").upsert(
+    const { error: documentError } = await supabase.from("workspaces").upsert(
       [
         {
           id: boardId,
+          owner_id: user.id,
           snapshot: documentString,
           preview_img: previewImgUrl,
           updated_at: now,
@@ -127,8 +184,26 @@ const Workspace = ({ boardId }: { boardId: string }) => {
         onConflict: "id",
       }
     );
-    if (error) {
-      console.error("Error inserting workspace:", error);
+    if (documentError) {
+      console.error("Error inserting workspace:", documentError);
+      return false;
+    }
+
+    const { error: sessionError } = await supabase
+      .from("workspace_sessions")
+      .upsert(
+        [
+          {
+            workspace_id: boardId,
+            user_id: user.id,
+            session,
+            updated_at: new Date().toISOString(),
+          },
+        ],
+        { onConflict: "workspace_id,user_id" }
+      );
+    if (sessionError) {
+      console.error("Error inserting workspace:", sessionError);
       return false;
     }
 
@@ -192,8 +267,17 @@ const Workspace = ({ boardId }: { boardId: string }) => {
     MainMenu: CustomMainMenu,
   };
 
+  if (loading) {
+    return (
+      <div className="bg-neutral-950 text-white/90 flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+      </div>
+    );
+  }
+
   return (
     <Tldraw
+      snapshot={snapshot}
       inferDarkMode={true}
       persistenceKey={boardId ? `board-${boardId}` : "collabboardpersistence"}
       overrides={myOverrides}

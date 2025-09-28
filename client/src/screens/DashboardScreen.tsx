@@ -16,12 +16,15 @@ const DashboardScreen = () => {
   const [currentScope, setCurrentScope] = useState<WorkspaceScope>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadAllWorkspaces = async () => {
-      const { data, error } = await supabase.from("workspaces").select();
+      const { data, error } = await supabase
+        .from("workspaces")
+        .select()
+        .eq("owner_id", user?.id);
 
       if (error) {
         console.error("Error loading workspaces:", error);
@@ -38,6 +41,7 @@ const DashboardScreen = () => {
           snapshot: ws.snapshot,
           updatedAt: ws.updated_at,
           createdAt: ws.created_at,
+          ownerId: ws.owner_id,
         });
       });
 
@@ -45,10 +49,10 @@ const DashboardScreen = () => {
     };
 
     loadAllWorkspaces();
-  }, []);
+  }, [user]);
 
   const handleNewClick = async (name: string) => {
-    if (!currentScope) return;
+    if (!currentScope || !user?.id) return;
 
     const now = new Date().toISOString();
     const newBoardId = crypto.randomUUID();
@@ -62,6 +66,7 @@ const DashboardScreen = () => {
         preview_img: "",
         created_at: now,
         updated_at: now,
+        owner_id: user.id,
       },
     ]);
 
@@ -71,7 +76,7 @@ const DashboardScreen = () => {
     }
 
     setIsModalOpen(false);
-    window.location.href = `/board/${newBoardId}`;
+    navigate(`/board/${newBoardId}`);
   };
 
   const handleRenameWorkspace = async (id: string, newName: string) => {
