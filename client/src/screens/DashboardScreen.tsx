@@ -18,7 +18,7 @@ const DashboardScreen = () => {
   const [isNewWorkspaceModalOpen, setIsNewWorkspaceModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  const { signOut, user, userProfile } = useAuth();
+  const { signOut, user, userProfile, deleteUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -123,6 +123,17 @@ const DashboardScreen = () => {
     await signOut();
     setIsLoading(false);
     navigate("/login");
+  };
+
+  const handleProfileDelete = async () => {
+    const response = await deleteUser();
+
+    if (response.success) {
+      await signOut();
+      navigate("/login");
+    } else {
+      alert(`Failed to delete user: ${response.error}`);
+    }
   };
 
   return (
@@ -231,7 +242,7 @@ const DashboardScreen = () => {
         <ProfileModal
           isOpen={isProfileModalOpen}
           onClose={() => setIsProfileModalOpen(false)}
-          onDelete={() => console.log("Deleted")}
+          onDelete={handleProfileDelete}
           userProfile={userProfile}
         />
       </div>

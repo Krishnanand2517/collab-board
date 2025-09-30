@@ -169,6 +169,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return { data, error };
   };
 
+  const deleteUser = async () => {
+    if (!user || !session)
+      return { success: false, error: "No user session found" };
+
+    const { data, error } = await supabase.functions.invoke("delete-account");
+
+    if (error) {
+      console.error("Error deleting account:", error);
+      return { success: false, error: error?.message };
+    }
+
+    return {
+      success: true,
+      message: data?.message ?? "Account deleted successfully",
+    };
+  };
+
   const value = {
     user,
     userProfile,
@@ -181,6 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     verifyOtp,
     resendOtp,
     updateProfile,
+    deleteUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

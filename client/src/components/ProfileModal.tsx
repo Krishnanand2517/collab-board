@@ -6,7 +6,7 @@ import type { UserProfile } from "../auth/AuthContext";
 interface ProfileModalPropTypes {
   isOpen: boolean;
   onClose: () => void;
-  onDelete: () => void;
+  onDelete: () => Promise<void>;
   userProfile: UserProfile | null;
 }
 
@@ -18,6 +18,7 @@ const ProfileModal = ({
 }: ProfileModalPropTypes) => {
   const [hasClickedDelete, setHasClickedDelete] = useState(false);
   const [typedEmail, setTypedEmail] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -39,6 +40,7 @@ const ProfileModal = ({
 
   const handleDelete = () => {
     if (hasClickedDelete) {
+      setIsDeleting(true);
       onDelete();
     }
     setHasClickedDelete(true);
@@ -104,10 +106,17 @@ const ProfileModal = ({
 
           <button
             onClick={handleDelete}
-            disabled={hasClickedDelete && typedEmail !== userProfile.email}
+            disabled={
+              isDeleting ||
+              (hasClickedDelete && typedEmail !== userProfile.email)
+            }
             className="rounded-md cursor-pointer bg-red-700 px-5 py-2 text-sm font-medium text-neutral-300 transition-colors hover:bg-red-900 disabled:bg-red-900 disabled:cursor-not-allowed"
           >
-            {hasClickedDelete ? "Delete" : "Delete User Profile"}
+            {isDeleting
+              ? "Deleting..."
+              : hasClickedDelete
+              ? "Delete"
+              : "Delete User Profile"}
           </button>
         </div>
 

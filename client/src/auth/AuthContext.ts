@@ -37,6 +37,11 @@ export interface AuthContextType {
   updateProfile: (
     updates: Partial<UserProfile>
   ) => Promise<UpdateProfileResult>;
+  deleteUser: () => Promise<{
+    success: boolean;
+    message?: string;
+    error?: string;
+  }>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
