@@ -2,21 +2,23 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, PlusCircle } from "lucide-react";
 
-import Footer from "../components/Footer";
-import type { WorkspaceScope, WorkspaceType } from "../types";
-import NewWorkspaceModal from "../components/NewWorkspaceModal";
 import supabase from "../db/supabaseClient";
-import WorkspaceCard from "../components/WorkspaceCard";
+import type { WorkspaceScope, WorkspaceType } from "../types";
 import { useAuth } from "../auth/useAuth";
+import Footer from "../components/Footer";
+import NewWorkspaceModal from "../components/NewWorkspaceModal";
+import WorkspaceCard from "../components/WorkspaceCard";
+import ProfileModal from "../components/ProfileModal";
 
 const DashboardScreen = () => {
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [currentScope, setCurrentScope] = useState<WorkspaceScope>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNewWorkspaceModalOpen, setIsNewWorkspaceModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  const { signOut, user } = useAuth();
+  const { signOut, user, userProfile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,7 +77,7 @@ const DashboardScreen = () => {
       return;
     }
 
-    setIsModalOpen(false);
+    setIsNewWorkspaceModalOpen(false);
     navigate(`/board/${newBoardId}`);
   };
 
@@ -99,12 +101,12 @@ const DashboardScreen = () => {
   };
 
   const handleNewPersonalClick = () => {
-    setIsModalOpen(true);
+    setIsNewWorkspaceModalOpen(true);
     setCurrentScope("personal");
   };
 
   const handleNewTeamClick = () => {
-    setIsModalOpen(true);
+    setIsNewWorkspaceModalOpen(true);
     setCurrentScope("team");
   };
 
@@ -138,12 +140,12 @@ const DashboardScreen = () => {
           </div>
 
           <div className="flex items-center space-x-6 text-sm font-medium text-neutral-300">
-            <a
-              href="#"
-              className="hover:text-amber-400 transition-colors duration-300"
+            <button
+              onClick={() => setIsProfileModalOpen(true)}
+              className="cursor-pointer hover:text-amber-400 transition-colors duration-300"
             >
-              Profile
-            </a>
+              {userProfile ? userProfile.name : "Profile"}
+            </button>
             <button
               disabled={isLoading}
               onClick={handleLogout}
@@ -221,9 +223,16 @@ const DashboardScreen = () => {
         </main>
 
         <NewWorkspaceModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isNewWorkspaceModalOpen}
+          onClose={() => setIsNewWorkspaceModalOpen(false)}
           onCreate={handleNewClick}
+        />
+
+        <ProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          onDelete={() => console.log("Deleted")}
+          userProfile={userProfile}
         />
       </div>
 
