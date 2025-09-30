@@ -128,7 +128,10 @@ const Workspace = ({ boardId }: { boardId: string }) => {
 
         const session = sessionData?.session ?? null;
 
-        setSnapshot({ document: document ?? {}, session: session ?? {} });
+        setSnapshot({
+          document: document ?? undefined,
+          session: session ?? undefined,
+        });
       } catch (err) {
         console.error("Failed to load workspace:", err);
       } finally {
