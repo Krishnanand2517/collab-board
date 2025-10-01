@@ -117,7 +117,10 @@ const WorkspaceCard = ({
 
       <ConfirmDeleteModal
         isOpen={isConfirmModalOpen}
-        onClose={() => setIsConfirmModalOpen(false)}
+        onClose={() => {
+          setIsConfirmModalOpen(false);
+          setIsHovering(false);
+        }}
         workspaceName={workspace.name}
         onDelete={handleDelete}
       />

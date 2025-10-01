@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 import type { UserProfile } from "../auth/AuthContext";
@@ -48,7 +49,7 @@ const ProfileModal = ({
 
   if (!isOpen || !userProfile?.name) return null;
 
-  return (
+  const modalContent = (
     <div
       onClick={onClose}
       className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/80 backdrop-blur-sm transition-opacity duration-300"
@@ -122,7 +123,7 @@ const ProfileModal = ({
 
         {hasClickedDelete && (
           <div className="text-sm mt-2">
-            <p className="text-neutral-300 mb-1">
+            <p className="font-medium text-neutral-300 mb-1">
               To confirm deletion, type your email address in the input box.
             </p>
             <p className="text-red-600">
@@ -134,6 +135,8 @@ const ProfileModal = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default ProfileModal;
