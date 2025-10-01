@@ -193,7 +193,7 @@ const DashboardScreen = () => {
                 onClick={handleNewPersonalClick}
                 className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
               >
-                <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400" />
+                <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400 group-hover:animate-spinBounce" />
                 <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
                   New Workspace
                 </span>
@@ -226,7 +226,7 @@ const DashboardScreen = () => {
                 onClick={handleNewTeamClick}
                 className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
               >
-                <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400" />
+                <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400 group-hover:animate-spinBounce" />
                 <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
                   New Workspace
                 </span>
