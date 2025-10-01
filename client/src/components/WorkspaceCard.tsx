@@ -1,22 +1,26 @@
 import { useState } from "react";
 
 import type { WorkspaceType } from "../types";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 type WorkspaceCardPropTypes = {
   workspace: WorkspaceType;
   onLoadWorkspace: (workspace: WorkspaceType) => void;
   onRename: (id: string, newName: string) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
 };
 
 const WorkspaceCard = ({
   workspace,
   onLoadWorkspace,
   onRename,
+  onDelete,
 }: WorkspaceCardPropTypes) => {
   const [name, setName] = useState(workspace.name);
   const [isHovering, setIsHovering] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const handleRename = () => {
     // Don't proceed in case of empty name or same name
@@ -27,6 +31,10 @@ const WorkspaceCard = ({
 
     onRename(workspace.id, name);
     setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    onDelete(workspace.id);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -84,16 +92,35 @@ const WorkspaceCard = ({
       </div>
 
       {isHovering && !isEditing && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsEditing(true);
-          }}
-          className="absolute top-2 right-2 z-10 rounded-full bg-neutral-950/60 p-2 text-white/70 backdrop-blur-sm transition-all hover:bg-neutral-800 hover:text-white"
-        >
-          <Pencil size={16} />
-        </button>
+        <div className="absolute top-2 right-2 z-10 flex gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true);
+            }}
+            className="rounded-full bg-neutral-950/60 p-2 text-white/70 backdrop-blur-sm transition-all hover:bg-neutral-800 hover:text-white"
+          >
+            <Pencil size={16} />
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsConfirmModalOpen(true);
+            }}
+            className="rounded-full bg-neutral-950/60 p-2 text-red-500/70 backdrop-blur-sm transition-all hover:bg-neutral-800 hover:text-red-500"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        workspaceName={workspace.name}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };

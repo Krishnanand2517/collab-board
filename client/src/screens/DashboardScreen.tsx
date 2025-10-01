@@ -100,6 +100,19 @@ const DashboardScreen = () => {
     );
   };
 
+  const handleDeleteWorkspace = async (id: string) => {
+    const { error } = await supabase.from("workspaces").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting workspace:", error);
+      return;
+    }
+
+    setWorkspaces((prevWorkspaces) =>
+      prevWorkspaces.filter((ws) => ws.id !== id)
+    );
+  };
+
   const handleNewPersonalClick = () => {
     setIsNewWorkspaceModalOpen(true);
     setCurrentScope("personal");
@@ -194,6 +207,7 @@ const DashboardScreen = () => {
                     workspace={workspace}
                     onLoadWorkspace={onLoadWorkspace}
                     onRename={handleRenameWorkspace}
+                    onDelete={handleDeleteWorkspace}
                     key={workspace.id}
                   />
                 ))}
@@ -226,6 +240,7 @@ const DashboardScreen = () => {
                     workspace={workspace}
                     onLoadWorkspace={onLoadWorkspace}
                     onRename={handleRenameWorkspace}
+                    onDelete={handleDeleteWorkspace}
                     key={workspace.id}
                   />
                 ))}
