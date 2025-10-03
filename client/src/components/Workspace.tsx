@@ -16,12 +16,69 @@ import {
   getSnapshot,
   Editor,
   type TLEditorSnapshot,
+  DefaultSharePanel,
+  DefaultTopPanel,
 } from "tldraw";
 import "tldraw/tldraw.css";
 
 import { actionsToDelete } from "../data/whiteboard";
 import supabase from "../db/supabaseClient";
 import { useAuth } from "../auth/useAuth";
+import Tooltip from "./Tooltip";
+
+interface CollaboratorPresence {
+  id: string;
+  name: string;
+  email: string;
+  color: string;
+  cursor: { x: number; y: number } | null;
+  lastSeen: string;
+}
+
+const CollaborationBar = ({
+  collaborators,
+}: {
+  collaborators: CollaboratorPresence[];
+}) => {
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  return (
+    <div className="px-6 py-2 absolute top-0 left-0 right-0 z-50 flex items-center justify-end border-b border-white/10 shadow-sm">
+      <div className="flex items-center space-x-3">
+        {/* Active Users Avatars */}
+        <div className="flex items-center -space-x-2">
+          {collaborators.slice(0, 5).map((user, index) => (
+            <div
+              key={user.id}
+              className="relative group"
+              style={{ zIndex: 50 - index }}
+            >
+              <Tooltip text={user.name}>
+                <div
+                  className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-semibold text-white cursor-pointer"
+                  style={{ backgroundColor: user.color }}
+                >
+                  {getInitials(user.name)}
+                </div>
+              </Tooltip>
+            </div>
+          ))}
+          {collaborators.length > 5 && (
+            <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center text-xs font-semibold text-gray-600 cursor-pointer">
+              +{collaborators.length - 5}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const CustomContextMenu = (props: TLUiContextMenuProps) => {
   const actions = useActions();
@@ -92,6 +149,25 @@ const CustomMainMenu = () => {
 const Workspace = ({ boardId }: { boardId: string }) => {
   const [snapshot, setSnapshot] = useState<TLEditorSnapshot>();
   const [loading, setLoading] = useState(false);
+
+  const [collaborators] = useState<CollaboratorPresence[]>([
+    {
+      id: "1",
+      name: "You",
+      email: "you@example.com",
+      color: "#3b82f6",
+      cursor: null,
+      lastSeen: new Date().toISOString(),
+    },
+    {
+      id: "2",
+      name: "Alice Johnson",
+      email: "alice@example.com",
+      color: "#ef4444",
+      cursor: { x: 340, y: 200 },
+      lastSeen: new Date().toISOString(),
+    },
+  ]);
 
   const { user } = useAuth();
 
@@ -268,6 +344,8 @@ const Workspace = ({ boardId }: { boardId: string }) => {
   const components: TLComponents = {
     ContextMenu: CustomContextMenu,
     MainMenu: CustomMainMenu,
+    SharePanel: DefaultSharePanel,
+    TopPanel: DefaultTopPanel,
   };
 
   if (loading) {
@@ -279,13 +357,21 @@ const Workspace = ({ boardId }: { boardId: string }) => {
   }
 
   return (
-    <Tldraw
-      snapshot={snapshot}
-      inferDarkMode={true}
-      persistenceKey={boardId ? `board-${boardId}` : "collabboardpersistence"}
-      overrides={myOverrides}
-      components={components}
-    />
+    <div className="relative w-full h-screen">
+      <CollaborationBar collaborators={collaborators} />
+
+      <div className="w-full h-full pt-12">
+        <Tldraw
+          snapshot={snapshot}
+          inferDarkMode={true}
+          persistenceKey={
+            boardId ? `board-${boardId}` : "collabboardpersistence"
+          }
+          overrides={myOverrides}
+          components={components}
+        />
+      </div>
+    </div>
   );
 };
 
