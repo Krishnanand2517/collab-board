@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import {
   Tldraw,
   type TLUiOverrides,
@@ -15,7 +15,6 @@ import {
   useActions,
   getSnapshot,
   Editor,
-  type TLEditorSnapshot,
   DefaultSharePanel,
   DefaultTopPanel,
 } from "tldraw";
@@ -25,20 +24,15 @@ import { actionsToDelete } from "../data/whiteboard";
 import supabase from "../db/supabaseClient";
 import { useAuth } from "../auth/useAuth";
 import Tooltip from "./Tooltip";
-
-interface CollaboratorPresence {
-  id: string;
-  name: string;
-  email: string;
-  color: string;
-  cursor: { x: number; y: number } | null;
-  lastSeen: string;
-}
+import { useOthers, useSelf } from "@liveblocks/react/suspense";
+import { useStorageStore } from "../liveblocks-utils/useStorageStore";
+import type { IUserInfo } from "@liveblocks/client";
+import { stringToColor } from "../data/userColors";
 
 const CollaborationBar = ({
   collaborators,
 }: {
-  collaborators: CollaboratorPresence[];
+  collaborators: (IUserInfo | undefined)[];
 }) => {
   const getInitials = (name: string) => {
     return name
@@ -48,30 +42,39 @@ const CollaborationBar = ({
       .toUpperCase();
   };
 
+  // Filter out any undefined collaborators before mapping
+  const validCollaborators = collaborators.filter(
+    (user): user is IUserInfo => user !== undefined
+  );
+
   return (
     <div className="px-6 py-2 absolute top-0 left-0 right-0 z-50 flex items-center justify-end border-b border-white/10 shadow-sm">
       <div className="flex items-center space-x-3">
         {/* Active Users Avatars */}
         <div className="flex items-center -space-x-2">
-          {collaborators.slice(0, 5).map((user, index) => (
+          {validCollaborators.slice(0, 5).map((user, index) => (
             <div
-              key={user.id}
+              key={index}
               className="relative group"
               style={{ zIndex: 50 - index }}
             >
-              <Tooltip text={user.name}>
+              <Tooltip text={user.name || "Anonymous"}>
                 <div
                   className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-semibold text-white cursor-pointer"
-                  style={{ backgroundColor: user.color }}
+                  style={{
+                    backgroundColor: stringToColor(
+                      user.name || `Anonymous ${index}`
+                    ),
+                  }}
                 >
-                  {getInitials(user.name)}
+                  {getInitials(user.name || "Anonymous")}
                 </div>
               </Tooltip>
             </div>
           ))}
-          {collaborators.length > 5 && (
+          {validCollaborators.length > 5 && (
             <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center text-xs font-semibold text-gray-600 cursor-pointer">
-              +{collaborators.length - 5}
+              +{validCollaborators.length - 5}
             </div>
           )}
         </div>
@@ -147,76 +150,70 @@ const CustomMainMenu = () => {
 };
 
 const Workspace = ({ boardId }: { boardId: string }) => {
-  const [snapshot, setSnapshot] = useState<TLEditorSnapshot>();
-  const [loading, setLoading] = useState(false);
+  // const [snapshot, setSnapshot] = useState<TLEditorSnapshot>();
+  // const [loading, setLoading] = useState(false);
 
-  const [collaborators] = useState<CollaboratorPresence[]>([
-    {
-      id: "1",
-      name: "You",
-      email: "you@example.com",
-      color: "#3b82f6",
-      cursor: null,
-      lastSeen: new Date().toISOString(),
-    },
-    {
-      id: "2",
-      name: "Alice Johnson",
-      email: "alice@example.com",
-      color: "#ef4444",
-      cursor: { x: 340, y: 200 },
-      lastSeen: new Date().toISOString(),
-    },
-  ]);
+  const self = useSelf();
+  const others = useOthers();
+
+  const collaborators = [self, ...others];
 
   const { user } = useAuth();
 
-  useEffect(() => {
-    const loadWorkspace = async () => {
-      if (!user?.id || !boardId) return;
+  const store = useStorageStore({
+    user: {
+      id: user?.id ?? "anonymous",
+      color: user?.user_metadata?.color ?? "#000000",
+      name: user?.user_metadata?.name ?? "Anonymous",
+    },
+  });
 
-      setLoading(true);
+  // useEffect(() => {
+  //   const loadWorkspace = async () => {
+  //     if (!user?.id || !boardId) return;
 
-      try {
-        const { data: docData, error: docError } = await supabase
-          .from("workspaces")
-          .select("snapshot")
-          .eq("id", boardId)
-          .single();
+  //     // setLoading(true);
 
-        if (docError) throw docError;
+  //     try {
+  //       const { data: docData, error: docError } = await supabase
+  //         .from("workspaces")
+  //         .select("snapshot")
+  //         .eq("id", boardId)
+  //         .single();
 
-        const document = docData?.snapshot
-          ? JSON.parse(docData.snapshot)
-          : null;
+  //       if (docError) throw docError;
 
-        const { data: sessionData, error: sessionError } = await supabase
-          .from("workspace_sessions")
-          .select("session")
-          .eq("workspace_id", boardId)
-          .eq("user_id", user.id)
-          .single();
+  //       const document = docData?.snapshot
+  //         ? JSON.parse(docData.snapshot)
+  //         : null;
 
-        if (sessionError && sessionError.code !== "PGRST116") {
-          // PGRST116 = no rows found, okay to ignore
-          throw sessionError;
-        }
+  //       const { data: sessionData, error: sessionError } = await supabase
+  //         .from("workspace_sessions")
+  //         .select("session")
+  //         .eq("workspace_id", boardId)
+  //         .eq("user_id", user.id)
+  //         .single();
 
-        const session = sessionData?.session ?? null;
+  //       if (sessionError && sessionError.code !== "PGRST116") {
+  //         // PGRST116 = no rows found, okay to ignore
+  //         throw sessionError;
+  //       }
 
-        setSnapshot({
-          document: document ?? undefined,
-          session: session ?? undefined,
-        });
-      } catch (err) {
-        console.error("Failed to load workspace:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       const session = sessionData?.session ?? null;
 
-    loadWorkspace();
-  }, [boardId, user?.id]);
+  //       setSnapshot({
+  //         document: document ?? undefined,
+  //         session: session ?? undefined,
+  //       });
+  //     } catch (err) {
+  //       console.error("Failed to load workspace:", err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   loadWorkspace();
+  // }, [boardId, user?.id]);
 
   const getWorkspaceImage = async (editor: Editor) => {
     const shapeIds = editor.getCurrentPageShapeIds();
@@ -348,7 +345,7 @@ const Workspace = ({ boardId }: { boardId: string }) => {
     TopPanel: DefaultTopPanel,
   };
 
-  if (loading) {
+  if (store.status === "loading") {
     return (
       <div className="bg-neutral-950 text-white/90 flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
@@ -358,17 +355,19 @@ const Workspace = ({ boardId }: { boardId: string }) => {
 
   return (
     <div className="relative w-full h-screen">
-      <CollaborationBar collaborators={collaborators} />
+      <CollaborationBar collaborators={collaborators.map((u) => u.info)} />
 
       <div className="w-full h-full pt-12">
         <Tldraw
-          snapshot={snapshot}
+          store={store}
+          // snapshot={snapshot}
           inferDarkMode={true}
-          persistenceKey={
-            boardId ? `board-${boardId}` : "collabboardpersistence"
-          }
+          // persistenceKey={
+          //   boardId ? `board-${boardId}` : "collabboardpersistence"
+          // }
           overrides={myOverrides}
           components={components}
+          autoFocus
         />
       </div>
     </div>
