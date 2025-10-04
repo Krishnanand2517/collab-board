@@ -15,8 +15,6 @@ import {
   useActions,
   getSnapshot,
   Editor,
-  DefaultSharePanel,
-  DefaultTopPanel,
 } from "tldraw";
 import "tldraw/tldraw.css";
 
@@ -150,9 +148,6 @@ const CustomMainMenu = () => {
 };
 
 const Workspace = ({ boardId }: { boardId: string }) => {
-  // const [snapshot, setSnapshot] = useState<TLEditorSnapshot>();
-  // const [loading, setLoading] = useState(false);
-
   const self = useSelf();
   const others = useOthers();
 
@@ -167,53 +162,6 @@ const Workspace = ({ boardId }: { boardId: string }) => {
       name: user?.user_metadata?.name ?? "Anonymous",
     },
   });
-
-  // useEffect(() => {
-  //   const loadWorkspace = async () => {
-  //     if (!user?.id || !boardId) return;
-
-  //     // setLoading(true);
-
-  //     try {
-  //       const { data: docData, error: docError } = await supabase
-  //         .from("workspaces")
-  //         .select("snapshot")
-  //         .eq("id", boardId)
-  //         .single();
-
-  //       if (docError) throw docError;
-
-  //       const document = docData?.snapshot
-  //         ? JSON.parse(docData.snapshot)
-  //         : null;
-
-  //       const { data: sessionData, error: sessionError } = await supabase
-  //         .from("workspace_sessions")
-  //         .select("session")
-  //         .eq("workspace_id", boardId)
-  //         .eq("user_id", user.id)
-  //         .single();
-
-  //       if (sessionError && sessionError.code !== "PGRST116") {
-  //         // PGRST116 = no rows found, okay to ignore
-  //         throw sessionError;
-  //       }
-
-  //       const session = sessionData?.session ?? null;
-
-  //       setSnapshot({
-  //         document: document ?? undefined,
-  //         session: session ?? undefined,
-  //       });
-  //     } catch (err) {
-  //       console.error("Failed to load workspace:", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   loadWorkspace();
-  // }, [boardId, user?.id]);
 
   const getWorkspaceImage = async (editor: Editor) => {
     const shapeIds = editor.getCurrentPageShapeIds();
@@ -257,24 +205,6 @@ const Workspace = ({ boardId }: { boardId: string }) => {
       console.error("Error inserting workspace:", documentError);
       return false;
     }
-
-    // const { error: sessionError } = await supabase
-    //   .from("workspace_sessions")
-    //   .upsert(
-    //     [
-    //       {
-    //         workspace_id: boardId,
-    //         user_id: user.id,
-    //         session,
-    //         updated_at: new Date().toISOString(),
-    //       },
-    //     ],
-    //     { onConflict: "workspace_id,user_id" }
-    //   );
-    // if (sessionError) {
-    //   console.error("Error inserting workspace:", sessionError);
-    //   return false;
-    // }
 
     return true;
   };
@@ -334,8 +264,6 @@ const Workspace = ({ boardId }: { boardId: string }) => {
   const components: TLComponents = {
     ContextMenu: CustomContextMenu,
     MainMenu: CustomMainMenu,
-    SharePanel: DefaultSharePanel,
-    TopPanel: DefaultTopPanel,
   };
 
   if (store.status === "loading") {
@@ -353,11 +281,7 @@ const Workspace = ({ boardId }: { boardId: string }) => {
       <div className="w-full h-full pt-12">
         <Tldraw
           store={store}
-          // snapshot={snapshot}
           inferDarkMode={true}
-          // persistenceKey={
-          //   boardId ? `board-${boardId}` : "collabboardpersistence"
-          // }
           overrides={myOverrides}
           components={components}
           autoFocus
