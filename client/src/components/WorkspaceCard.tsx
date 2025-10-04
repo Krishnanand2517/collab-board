@@ -5,6 +5,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 type WorkspaceCardPropTypes = {
+  isOwner: boolean;
   workspace: WorkspaceType;
   onLoadWorkspace: (workspace: WorkspaceType) => void;
   onRename: (id: string, newName: string) => Promise<void>;
@@ -12,6 +13,7 @@ type WorkspaceCardPropTypes = {
 };
 
 const WorkspaceCard = ({
+  isOwner,
   workspace,
   onLoadWorkspace,
   onRename,
@@ -23,6 +25,8 @@ const WorkspaceCard = ({
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const handleRename = () => {
+    if (!isOwner) return;
+
     // Don't proceed in case of empty name or same name
     if (name.trim() === "" || name === workspace.name) {
       setName(workspace.name);
@@ -93,15 +97,17 @@ const WorkspaceCard = ({
 
       {isHovering && !isEditing && (
         <div className="absolute top-2 right-2 z-10 flex gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsEditing(true);
-            }}
-            className="rounded-full bg-neutral-950/60 p-2 text-white/70 backdrop-blur-sm transition-all hover:bg-neutral-800 hover:text-white"
-          >
-            <Pencil size={16} />
-          </button>
+          {isOwner && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+              }}
+              className="rounded-full bg-neutral-950/60 p-2 text-white/70 backdrop-blur-sm transition-all hover:bg-neutral-800 hover:text-white"
+            >
+              <Pencil size={16} />
+            </button>
+          )}
 
           <button
             onClick={(e) => {

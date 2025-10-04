@@ -106,6 +106,10 @@ const DashboardScreen = () => {
   };
 
   const handleRenameWorkspace = async (id: string, newName: string) => {
+    const workspace = workspaces.find((ws) => ws.id === id);
+    if (!user?.id || !workspace?.ownerId) return;
+    if (workspace.ownerId !== user.id) return;
+
     const now = new Date().toISOString();
     const { error } = await supabase
       .from("workspaces")
@@ -125,11 +129,29 @@ const DashboardScreen = () => {
   };
 
   const handleDeleteWorkspace = async (id: string) => {
-    const { error } = await supabase.from("workspaces").delete().eq("id", id);
+    const workspace = workspaces.find((ws) => ws.id === id);
+    if (!user?.id || !workspace?.ownerId) return;
 
-    if (error) {
-      console.error("Error deleting workspace:", error);
-      return;
+    const isOwner = workspace.ownerId === user.id;
+
+    if (isOwner) {
+      const { error } = await supabase.from("workspaces").delete().eq("id", id);
+
+      if (error) {
+        console.error("Error deleting workspace:", error);
+        return;
+      }
+    } else {
+      const { error } = await supabase
+        .from("document_permissions")
+        .delete()
+        .eq("document_id", id)
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Error leaving workspace:", error);
+        return;
+      }
     }
 
     setWorkspaces((prevWorkspaces) =>
@@ -228,6 +250,7 @@ const DashboardScreen = () => {
                 .filter((workspace) => workspace.scope == "personal")
                 .map((workspace) => (
                   <WorkspaceCard
+                    isOwner={workspace.ownerId === user?.id}
                     workspace={workspace}
                     onLoadWorkspace={onLoadWorkspace}
                     onRename={handleRenameWorkspace}
@@ -261,6 +284,7 @@ const DashboardScreen = () => {
                 .filter((workspace) => workspace.scope == "team")
                 .map((workspace) => (
                   <WorkspaceCard
+                    isOwner={workspace.ownerId === user?.id}
                     workspace={workspace}
                     onLoadWorkspace={onLoadWorkspace}
                     onRename={handleRenameWorkspace}
