@@ -28,6 +28,7 @@ const DashboardScreen = () => {
   useEffect(() => {
     const loadAllWorkspaces = async () => {
       if (!user?.id) return;
+      setIsLoading(true);
 
       const { data, error } = await supabase.rpc("get_user_workspaces", {
         user_id_param: user.id,
@@ -51,6 +52,7 @@ const DashboardScreen = () => {
       }));
 
       setWorkspaces(fetchedWorkspaces);
+      setIsLoading(false);
     };
 
     loadAllWorkspaces();
@@ -58,11 +60,28 @@ const DashboardScreen = () => {
 
   const handleNewClick = async (name: string) => {
     if (!currentScope || !user?.id) return;
+    setIsLoading(true);
 
     const now = new Date().toISOString();
     const newBoardId = crypto.randomUUID();
 
-    const { error } = await supabase.from("workspaces").insert([
+    const { error: permissionError } = await supabase
+      .from("document_permissions")
+      .insert([
+        {
+          document_id: newBoardId,
+          user_id: user.id,
+          role: "owner",
+        },
+      ]);
+
+    if (permissionError) {
+      console.error("Error setting permission:", permissionError);
+      setIsLoading(false);
+      return;
+    }
+
+    const { error: workspaceError } = await supabase.from("workspaces").insert([
       {
         id: newBoardId,
         name: name,
@@ -75,11 +94,13 @@ const DashboardScreen = () => {
       },
     ]);
 
-    if (error) {
-      console.error("Error inserting workspace:", error);
+    if (workspaceError) {
+      console.error("Error creating workspace:", workspaceError);
+      setIsLoading(false);
       return;
     }
 
+    setIsLoading(false);
     setIsNewWorkspaceModalOpen(false);
     navigate(`/board/${newBoardId}`);
   };
