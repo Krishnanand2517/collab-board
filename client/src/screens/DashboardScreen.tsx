@@ -56,7 +56,7 @@ const DashboardScreen = () => {
     };
 
     loadAllWorkspaces();
-  }, [user]);
+  }, [user?.id]);
 
   const handleNewClick = async (name: string) => {
     if (!currentScope || !user?.id) return;
