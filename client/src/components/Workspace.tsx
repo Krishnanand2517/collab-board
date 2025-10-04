@@ -238,50 +238,43 @@ const Workspace = ({ boardId }: { boardId: string }) => {
       throw new Error("No user found");
     }
 
-    const { document, session } = getSnapshot(editor.store);
+    const { document } = getSnapshot(editor.store);
     const documentString = JSON.stringify(document);
 
     const previewImgUrl = await getWorkspaceImage(editor);
     if (!previewImgUrl) return false;
 
-    const now = new Date().toISOString();
-
-    const { error: documentError } = await supabase.from("workspaces").upsert(
-      [
-        {
-          id: boardId,
-          owner_id: user.id,
-          snapshot: documentString,
-          preview_img: previewImgUrl,
-          updated_at: now,
-        },
-      ],
+    const { error: documentError } = await supabase.rpc(
+      "update_workspace_preview",
       {
-        onConflict: "id",
+        board_id: boardId,
+        new_preview_img: previewImgUrl,
+        new_snapshot: documentString,
       }
     );
+
     if (documentError) {
       console.error("Error inserting workspace:", documentError);
       return false;
     }
 
-    const { error: sessionError } = await supabase
-      .from("workspace_sessions")
-      .upsert(
-        [
-          {
-            workspace_id: boardId,
-            user_id: user.id,
-            session,
-            updated_at: new Date().toISOString(),
-          },
-        ],
-        { onConflict: "workspace_id,user_id" }
-      );
-    if (sessionError) {
-      console.error("Error inserting workspace:", sessionError);
-      return false;
-    }
+    // const { error: sessionError } = await supabase
+    //   .from("workspace_sessions")
+    //   .upsert(
+    //     [
+    //       {
+    //         workspace_id: boardId,
+    //         user_id: user.id,
+    //         session,
+    //         updated_at: new Date().toISOString(),
+    //       },
+    //     ],
+    //     { onConflict: "workspace_id,user_id" }
+    //   );
+    // if (sessionError) {
+    //   console.error("Error inserting workspace:", sessionError);
+    //   return false;
+    // }
 
     return true;
   };

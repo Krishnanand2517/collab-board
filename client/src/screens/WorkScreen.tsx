@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { ClientSideSuspense, RoomProvider } from "@liveblocks/react/suspense";
+import { LiveMap } from "@liveblocks/core";
 
 import Workspace from "../components/Workspace";
 
@@ -7,7 +8,11 @@ const WorkScreen = () => {
   const { boardId } = useParams();
 
   return (
-    <RoomProvider id={boardId!} initialPresence={{ cursor: null }}>
+    <RoomProvider
+      id={boardId!}
+      initialPresence={{ presence: undefined }}
+      initialStorage={{ records: new LiveMap() }}
+    >
       <ClientSideSuspense
         fallback={
           <div className="bg-neutral-950 text-white/90 flex items-center justify-center min-h-screen">
