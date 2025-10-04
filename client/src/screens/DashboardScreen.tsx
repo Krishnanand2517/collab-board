@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Sparkles, PlusCircle } from "lucide-react";
 
 import supabase from "../db/supabaseClient";
-import type { WorkspaceScope, WorkspaceType } from "../types";
+import type {
+  WorkspaceDbResponse,
+  WorkspaceScope,
+  WorkspaceType,
+} from "../types";
 import { useAuth } from "../auth/useAuth";
 import Footer from "../components/Footer";
 import NewWorkspaceModal from "../components/NewWorkspaceModal";
@@ -23,29 +27,28 @@ const DashboardScreen = () => {
 
   useEffect(() => {
     const loadAllWorkspaces = async () => {
-      const { data, error } = await supabase
-        .from("workspaces")
-        .select()
-        .eq("owner_id", user?.id);
+      if (!user?.id) return;
+
+      const { data, error } = await supabase.rpc("get_user_workspaces", {
+        user_id_param: user.id,
+      });
 
       if (error) {
         console.error("Error loading workspaces:", error);
         return;
       }
 
-      const fetchedWorkspaces: WorkspaceType[] = [];
-      data.map((ws) => {
-        fetchedWorkspaces.push({
-          name: ws.name,
-          id: ws.id,
-          previewImg: ws.preview_img,
-          scope: ws.scope,
-          snapshot: ws.snapshot,
-          updatedAt: ws.updated_at,
-          createdAt: ws.created_at,
-          ownerId: ws.owner_id,
-        });
-      });
+      const fetchedWorkspaces = (data ?? []).map((ws: WorkspaceDbResponse) => ({
+        id: ws.id,
+        name: ws.name,
+        previewImg: ws.preview_img,
+        scope: ws.scope,
+        snapshot: ws.snapshot,
+        updatedAt: ws.updated_at,
+        createdAt: ws.created_at,
+        ownerId: ws.owner_id,
+        role: ws.role,
+      }));
 
       setWorkspaces(fetchedWorkspaces);
     };
