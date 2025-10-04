@@ -8,12 +8,13 @@ const COLORS = [
   "#FF8A65", // Orange
 ];
 
-// Generates a color from a string
 export const stringToColor = (str: string): string => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const index = Math.abs(hash) % COLORS.length;
+
+  const seed = hash + Date.now() + Math.random() * 1000000;
+  const index = Math.floor(Math.abs(seed) % COLORS.length);
   return COLORS[index];
 };
