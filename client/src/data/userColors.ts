@@ -8,13 +8,17 @@ const COLORS = [
   "#FF8A65", // Orange
 ];
 
-export const stringToColor = (str: string): string => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+// Cache to store generated colors for each user
+const colorCache = new Map<string, string>();
+
+export const stringToColor = (identifier: string): string => {
+  if (colorCache.has(identifier)) {
+    return colorCache.get(identifier)!;
   }
 
-  const seed = hash + Date.now() + Math.random() * 1000000;
-  const index = Math.floor(Math.abs(seed) % COLORS.length);
-  return COLORS[index];
+  const index = Math.floor(Math.random() * COLORS.length);
+  const color = COLORS[index];
+
+  colorCache.set(identifier, color);
+  return color;
 };

@@ -170,7 +170,9 @@ const DashboardScreen = () => {
   };
 
   const onLoadWorkspace = (workspace: WorkspaceType) => {
-    window.location.href = `/board/${workspace.id}`;
+    navigate(`/board/${workspace.id}`, {
+      state: { workspaceName: workspace.name },
+    });
   };
 
   const handleLogout: React.MouseEventHandler<HTMLButtonElement> = async (

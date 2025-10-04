@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { ClientSideSuspense, RoomProvider } from "@liveblocks/react/suspense";
 import { LiveMap } from "@liveblocks/core";
 
@@ -6,6 +6,9 @@ import Workspace from "../components/Workspace";
 
 const WorkScreen = () => {
   const { boardId } = useParams();
+  const location = useLocation();
+  const boardName = (location.state as { workspaceName: string })
+    ?.workspaceName;
 
   return (
     <RoomProvider
@@ -21,7 +24,10 @@ const WorkScreen = () => {
         }
       >
         <div className="fixed inset-0">
-          <Workspace boardId={boardId || "collabboardpersistence"} />
+          <Workspace
+            boardName={boardName}
+            boardId={boardId || "collabboardpersistence"}
+          />
         </div>
       </ClientSideSuspense>
     </RoomProvider>
