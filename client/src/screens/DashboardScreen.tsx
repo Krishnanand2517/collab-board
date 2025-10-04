@@ -65,22 +65,6 @@ const DashboardScreen = () => {
     const now = new Date().toISOString();
     const newBoardId = crypto.randomUUID();
 
-    const { error: permissionError } = await supabase
-      .from("document_permissions")
-      .insert([
-        {
-          document_id: newBoardId,
-          user_id: user.id,
-          role: "owner",
-        },
-      ]);
-
-    if (permissionError) {
-      console.error("Error setting permission:", permissionError);
-      setIsLoading(false);
-      return;
-    }
-
     const { error: workspaceError } = await supabase.from("workspaces").insert([
       {
         id: newBoardId,
@@ -96,6 +80,22 @@ const DashboardScreen = () => {
 
     if (workspaceError) {
       console.error("Error creating workspace:", workspaceError);
+      setIsLoading(false);
+      return;
+    }
+
+    const { error: permissionError } = await supabase
+      .from("document_permissions")
+      .insert([
+        {
+          document_id: newBoardId,
+          user_id: user.id,
+          role: "owner",
+        },
+      ]);
+
+    if (permissionError) {
+      console.error("Error setting permission:", permissionError);
       setIsLoading(false);
       return;
     }
