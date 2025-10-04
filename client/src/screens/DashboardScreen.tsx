@@ -221,7 +221,7 @@ const DashboardScreen = () => {
               onClick={handleLogout}
               className="cursor-pointer hover:text-amber-400 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Logging out..." : "Logout"}
+              {isLoading ? "Loading..." : "Logout"}
             </button>
           </div>
         </nav>
@@ -246,18 +246,22 @@ const DashboardScreen = () => {
               </div>
 
               {/* --- Saved Personal Workspaces --- */}
-              {workspaces
-                .filter((workspace) => workspace.scope == "personal")
-                .map((workspace) => (
-                  <WorkspaceCard
-                    isOwner={workspace.ownerId === user?.id}
-                    workspace={workspace}
-                    onLoadWorkspace={onLoadWorkspace}
-                    onRename={handleRenameWorkspace}
-                    onDelete={handleDeleteWorkspace}
-                    key={workspace.id}
-                  />
-                ))}
+              {isLoading || !user ? (
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+              ) : (
+                workspaces
+                  .filter((workspace) => workspace.scope == "personal")
+                  .map((workspace) => (
+                    <WorkspaceCard
+                      isOwner={workspace.ownerId === user.id}
+                      workspace={workspace}
+                      onLoadWorkspace={onLoadWorkspace}
+                      onRename={handleRenameWorkspace}
+                      onDelete={handleDeleteWorkspace}
+                      key={workspace.id}
+                    />
+                  ))
+              )}
             </div>
           </div>
 
@@ -280,18 +284,22 @@ const DashboardScreen = () => {
               </div>
 
               {/* --- Saved Team Workspaces --- */}
-              {workspaces
-                .filter((workspace) => workspace.scope == "team")
-                .map((workspace) => (
-                  <WorkspaceCard
-                    isOwner={workspace.ownerId === user?.id}
-                    workspace={workspace}
-                    onLoadWorkspace={onLoadWorkspace}
-                    onRename={handleRenameWorkspace}
-                    onDelete={handleDeleteWorkspace}
-                    key={workspace.id}
-                  />
-                ))}
+              {isLoading || !user ? (
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+              ) : (
+                workspaces
+                  .filter((workspace) => workspace.scope == "team")
+                  .map((workspace) => (
+                    <WorkspaceCard
+                      isOwner={workspace.ownerId === user.id}
+                      workspace={workspace}
+                      onLoadWorkspace={onLoadWorkspace}
+                      onRename={handleRenameWorkspace}
+                      onDelete={handleDeleteWorkspace}
+                      key={workspace.id}
+                    />
+                  ))
+              )}
             </div>
           </div>
         </main>
