@@ -18,13 +18,16 @@ import { actionsToDelete } from "../data/whiteboard";
 import supabase from "../db/supabaseClient";
 import { useAuth } from "../auth/useAuth";
 import { useStorageStore } from "../liveblocks-utils/useStorageStore";
+import type { WorkspaceScope } from "../types";
 
 const Workspace = ({
   boardId,
   boardName,
+  boardScope,
 }: {
   boardId: string;
   boardName: string;
+  boardScope: WorkspaceScope;
 }) => {
   const self = useSelf();
   const others = useOthers();
@@ -156,8 +159,9 @@ const Workspace = ({
     <div className="relative w-full h-screen">
       <CollaborationBar
         userId={user.id}
-        boardName={boardName}
         collaborators={collaborators.map((u) => u.info)}
+        boardName={boardName}
+        boardScope={boardScope}
       />
 
       <div className="w-full h-full pt-12">

@@ -103,7 +103,7 @@ const DashboardScreen = () => {
     setIsLoading(false);
     setIsNewWorkspaceModalOpen(false);
     navigate(`/board/${newBoardId}`, {
-      state: { workspaceName: name },
+      state: { workspaceName: name, workspaceScope: currentScope },
     });
   };
 
@@ -173,7 +173,7 @@ const DashboardScreen = () => {
 
   const onLoadWorkspace = (workspace: WorkspaceType) => {
     navigate(`/board/${workspace.id}`, {
-      state: { workspaceName: workspace.name },
+      state: { workspaceName: workspace.name, workspaceScope: workspace.scope },
     });
   };
 

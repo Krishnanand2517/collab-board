@@ -3,12 +3,17 @@ import { ClientSideSuspense, RoomProvider } from "@liveblocks/react/suspense";
 import { LiveMap } from "@liveblocks/core";
 
 import Workspace from "../components/Workspace";
+import type { WorkspaceScope } from "../types";
 
 const WorkScreen = () => {
   const { boardId } = useParams();
   const location = useLocation();
-  const boardName = (location.state as { workspaceName: string })
-    ?.workspaceName;
+  const locationState = location.state as {
+    workspaceName: string;
+    workspaceScope: WorkspaceScope;
+  };
+  const boardName = locationState.workspaceName;
+  const boardScope = locationState.workspaceScope;
 
   return (
     <RoomProvider
@@ -25,8 +30,9 @@ const WorkScreen = () => {
       >
         <div className="fixed inset-0">
           <Workspace
-            boardName={boardName}
             boardId={boardId || "collabboardpersistence"}
+            boardName={boardName}
+            boardScope={boardScope}
           />
         </div>
       </ClientSideSuspense>

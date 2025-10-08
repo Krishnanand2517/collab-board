@@ -1,20 +1,22 @@
 import { useState } from "react";
-import { User, UserPlus } from "lucide-react";
+import { User, UserPlus, Lock } from "lucide-react";
 import type { IUserInfo } from "@liveblocks/client";
 
 import { stringToColor } from "../data/userColors";
 import Tooltip from "./Tooltip";
 import InviteModal from "./InviteModal";
-import type { Invitation } from "../types";
+import type { Invitation, WorkspaceScope } from "../types";
 
 const CollaborationBar = ({
   userId,
   collaborators,
   boardName,
+  boardScope,
 }: {
   userId: string;
   collaborators: (IUserInfo | undefined)[];
   boardName: string;
+  boardScope: WorkspaceScope;
 }) => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
@@ -27,6 +29,8 @@ const CollaborationBar = ({
   };
 
   const handleSendInvites = (invitations: Invitation[]) => {
+    if (boardScope === "personal") return;
+
     localStorage.setItem(
       `invitations-${userId}-${boardName}`,
       JSON.stringify(invitations)
@@ -61,11 +65,24 @@ const CollaborationBar = ({
 
       {/* CENTER */}
       <button
-        onClick={() => setIsInviteModalOpen(true)}
-        className="px-4 py-0.5 flex items-center space-x-3 font-medium border-[1.5px] border-white/80 rounded-lg cursor-pointer hover:bg-neutral-800 transition-colors"
+        onClick={() => boardScope === "team" && setIsInviteModalOpen(true)}
+        className={`px-4 py-0.5 flex items-center space-x-3 font-medium border-[1.5px] rounded-lg transition-colors ${
+          boardScope === "team"
+            ? "border-white/80 hover:bg-neutral-800 cursor-pointer"
+            : "border-neutral-900"
+        }`}
       >
-        <span>Invite</span>
-        <UserPlus size={16} />
+        {boardScope === "personal" ? (
+          <>
+            <span>Personal</span>
+            <Lock size={16} />
+          </>
+        ) : (
+          <>
+            <span>Invite</span>
+            <UserPlus size={16} />
+          </>
+        )}
       </button>
 
       {/* RIGHT */}
