@@ -103,7 +103,11 @@ const DashboardScreen = () => {
     setIsLoading(false);
     setIsNewWorkspaceModalOpen(false);
     navigate(`/board/${newBoardId}`, {
-      state: { workspaceName: name, workspaceScope: currentScope },
+      state: {
+        workspaceName: name,
+        workspaceScope: currentScope,
+        isOwner: true,
+      },
     });
   };
 
@@ -172,8 +176,14 @@ const DashboardScreen = () => {
   };
 
   const onLoadWorkspace = (workspace: WorkspaceType) => {
+    if (!user?.id) return;
+
     navigate(`/board/${workspace.id}`, {
-      state: { workspaceName: workspace.name, workspaceScope: workspace.scope },
+      state: {
+        workspaceName: workspace.name,
+        workspaceScope: workspace.scope,
+        isOwner: workspace.ownerId === user.id,
+      },
     });
   };
 

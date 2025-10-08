@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, UserPlus, Lock } from "lucide-react";
+import { User, UserPlus, Lock, FolderPlus } from "lucide-react";
 import type { IUserInfo } from "@liveblocks/client";
 
 import { stringToColor } from "../data/userColors";
@@ -12,11 +12,13 @@ const CollaborationBar = ({
   collaborators,
   boardName,
   boardScope,
+  isOwner,
 }: {
   userId: string;
   collaborators: (IUserInfo | undefined)[];
   boardName: string;
   boardScope: WorkspaceScope;
+  isOwner: boolean;
 }) => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
@@ -29,7 +31,7 @@ const CollaborationBar = ({
   };
 
   const handleSendInvites = (invitations: Invitation[]) => {
-    if (boardScope === "personal") return;
+    if (boardScope === "personal" || !isOwner) return;
 
     localStorage.setItem(
       `invitations-${userId}-${boardName}`,
@@ -65,11 +67,12 @@ const CollaborationBar = ({
 
       {/* CENTER */}
       <button
-        onClick={() => boardScope === "team" && setIsInviteModalOpen(true)}
+        disabled={boardScope === "personal" || !isOwner}
+        onClick={() => setIsInviteModalOpen(true)}
         className={`px-4 py-0.5 flex items-center space-x-3 font-medium border-[1.5px] rounded-lg transition-colors ${
-          boardScope === "team"
+          boardScope === "team" && isOwner
             ? "border-white/80 hover:bg-neutral-800 cursor-pointer"
-            : "border-neutral-900"
+            : "border-neutral-900 text-neutral-400"
         }`}
       >
         {boardScope === "personal" ? (
@@ -77,10 +80,15 @@ const CollaborationBar = ({
             <span>Personal</span>
             <Lock size={16} />
           </>
-        ) : (
+        ) : isOwner ? (
           <>
             <span>Invite</span>
             <UserPlus size={16} />
+          </>
+        ) : (
+          <>
+            <span>Shared</span>
+            <FolderPlus size={16} />
           </>
         )}
       </button>

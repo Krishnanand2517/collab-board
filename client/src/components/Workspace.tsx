@@ -24,10 +24,12 @@ const Workspace = ({
   boardId,
   boardName,
   boardScope,
+  isOwner,
 }: {
   boardId: string;
   boardName: string;
   boardScope: WorkspaceScope;
+  isOwner: boolean;
 }) => {
   const self = useSelf();
   const others = useOthers();
@@ -162,6 +164,7 @@ const Workspace = ({
         collaborators={collaborators.map((u) => u.info)}
         boardName={boardName}
         boardScope={boardScope}
+        isOwner={isOwner}
       />
 
       <div className="w-full h-full pt-12">

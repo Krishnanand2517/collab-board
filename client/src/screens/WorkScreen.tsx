@@ -11,9 +11,11 @@ const WorkScreen = () => {
   const locationState = location.state as {
     workspaceName: string;
     workspaceScope: WorkspaceScope;
+    isOwner: boolean;
   };
   const boardName = locationState.workspaceName;
   const boardScope = locationState.workspaceScope;
+  const isOwner = locationState.isOwner;
 
   return (
     <RoomProvider
@@ -33,6 +35,7 @@ const WorkScreen = () => {
             boardId={boardId || "collabboardpersistence"}
             boardName={boardName}
             boardScope={boardScope}
+            isOwner={isOwner}
           />
         </div>
       </ClientSideSuspense>
