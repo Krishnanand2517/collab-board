@@ -144,7 +144,7 @@ const Workspace = ({
     MainMenu: CustomMainMenu,
   };
 
-  if (store.status === "loading") {
+  if (store.status === "loading" || !user?.id) {
     return (
       <div className="bg-neutral-950 text-white/90 flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
@@ -155,6 +155,7 @@ const Workspace = ({
   return (
     <div className="relative w-full h-screen">
       <CollaborationBar
+        userId={user.id}
         boardName={boardName}
         collaborators={collaborators.map((u) => u.info)}
       />

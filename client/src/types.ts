@@ -22,3 +22,8 @@ export type WorkspaceDbResponse = Omit<
   owner_id: string;
   role: string;
 };
+
+export interface Invitation {
+  email: string;
+  role: "editor" | "viewer";
+}
