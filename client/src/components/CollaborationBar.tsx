@@ -53,10 +53,10 @@ const CollaborationBar = ({
   );
 
   return (
-    <div className="px-6 py-2 absolute top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/10 shadow-sm">
+    <div className="px-6 py-2 absolute top-0 left-0 right-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center border-b border-white/10 shadow-sm">
       {/* LEFT */}
-      <div className="flex items-center space-x-4 font-medium">
-        <span className="text-amber-600">{boardName}</span>
+      <div className="flex items-center space-x-4 font-medium min-w-0">
+        <span className="text-amber-600 truncate">{boardName}</span>
         <div className="flex items-center gap-2">
           <User size={16} />
           <span>{collaborators.length}</span>
@@ -86,7 +86,7 @@ const CollaborationBar = ({
       </button>
 
       {/* RIGHT */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-3 justify-self-end">
         {/* Active Users Avatars */}
         <div className="flex items-center -space-x-2">
           {validCollaborators.slice(0, 5).map((user, index) => (
