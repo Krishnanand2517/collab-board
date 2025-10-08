@@ -27,11 +27,16 @@ const CollaborationBar = ({
   };
 
   const handleSendInvites = (invitations: Invitation[]) => {
-    localStorage.setItem(`invitations-${userId}`, JSON.stringify(invitations));
+    localStorage.setItem(
+      `invitations-${userId}-${boardName}`,
+      JSON.stringify(invitations)
+    );
   };
 
   const handleLoadInvites = (): Invitation[] => {
-    const storedInvites = localStorage.getItem(`invitations-${userId}`);
+    const storedInvites = localStorage.getItem(
+      `invitations-${userId}-${boardName}`
+    );
 
     return storedInvites
       ? (JSON.parse(storedInvites) as Invitation[])

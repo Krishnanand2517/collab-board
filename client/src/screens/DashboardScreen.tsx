@@ -102,7 +102,9 @@ const DashboardScreen = () => {
 
     setIsLoading(false);
     setIsNewWorkspaceModalOpen(false);
-    navigate(`/board/${newBoardId}`);
+    navigate(`/board/${newBoardId}`, {
+      state: { workspaceName: name },
+    });
   };
 
   const handleRenameWorkspace = async (id: string, newName: string) => {
