@@ -18,19 +18,21 @@ import { actionsToDelete } from "../data/whiteboard";
 import supabase from "../db/supabaseClient";
 import { useAuth } from "../auth/useAuth";
 import { useStorageStore } from "../liveblocks-utils/useStorageStore";
-import type { WorkspaceScope } from "../types";
+import type { Invitation, WorkspaceScope } from "../types";
+
+interface WorkspacePropTypes {
+  boardId: string;
+  boardName: string;
+  boardScope: WorkspaceScope;
+  isOwner: boolean;
+}
 
 const Workspace = ({
   boardId,
   boardName,
   boardScope,
   isOwner,
-}: {
-  boardId: string;
-  boardName: string;
-  boardScope: WorkspaceScope;
-  isOwner: boolean;
-}) => {
+}: WorkspacePropTypes) => {
   const self = useSelf();
   const others = useOthers();
 
@@ -90,6 +92,29 @@ const Workspace = ({
     }
 
     return true;
+  };
+
+  const addPermissions = async (invitations: Invitation[]) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("invite-users", {
+        body: {
+          document_id: boardId,
+          invitations,
+        },
+      });
+
+      if (error) {
+        console.error("Error invoking function:", error);
+        throw error;
+      }
+
+      console.log("Function response:", data);
+    } catch (err) {
+      console.error("Error in adding permissions:", err);
+      if (err instanceof Error) {
+        throw new Error(err.message || "Failed to send invites");
+      }
+    }
   };
 
   const myOverrides: TLUiOverrides = {
@@ -165,6 +190,7 @@ const Workspace = ({
         boardName={boardName}
         boardScope={boardScope}
         isOwner={isOwner}
+        addPermissions={addPermissions}
       />
 
       <div className="w-full h-full pt-12">

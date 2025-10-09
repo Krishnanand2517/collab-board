@@ -7,19 +7,23 @@ import Tooltip from "./Tooltip";
 import InviteModal from "./InviteModal";
 import type { Invitation, WorkspaceScope } from "../types";
 
+interface CollaborationBarPropTypes {
+  userId: string;
+  collaborators: (IUserInfo | undefined)[];
+  boardName: string;
+  boardScope: WorkspaceScope;
+  isOwner: boolean;
+  addPermissions: (invitations: Invitation[]) => Promise<void>;
+}
+
 const CollaborationBar = ({
   userId,
   collaborators,
   boardName,
   boardScope,
   isOwner,
-}: {
-  userId: string;
-  collaborators: (IUserInfo | undefined)[];
-  boardName: string;
-  boardScope: WorkspaceScope;
-  isOwner: boolean;
-}) => {
+  addPermissions,
+}: CollaborationBarPropTypes) => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const getInitials = (name: string) => {
@@ -30,8 +34,10 @@ const CollaborationBar = ({
       .toUpperCase();
   };
 
-  const handleSendInvites = (invitations: Invitation[]) => {
+  const handleSendInvites = async (invitations: Invitation[]) => {
     if (boardScope === "personal" || !isOwner) return;
+
+    await addPermissions(invitations);
 
     localStorage.setItem(
       `invitations-${userId}-${boardName}`,

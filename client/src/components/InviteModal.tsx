@@ -7,7 +7,7 @@ import type { Invitation } from "../types";
 interface InviteModalPropTypes {
   isOpen: boolean;
   onClose: () => void;
-  onSendInvites: (invitations: Invitation[]) => void;
+  onSendInvites: (invitations: Invitation[]) => Promise<void>;
   onLoadInvites: () => Invitation[];
   workspaceName: string;
 }
@@ -60,7 +60,7 @@ const InviteModal = ({
     field: keyof Invitation,
     value: string
   ) => {
-    setError(null); // Clear errors on input change
+    setError(null);
     setInvitations((prev) =>
       prev.map((inv, i) => (i === index ? { ...inv, [field]: value } : inv))
     );
@@ -98,7 +98,7 @@ const InviteModal = ({
 
     setIsLoading(true);
     try {
-      onSendInvites(validInvitations);
+      await onSendInvites(validInvitations);
       onClose();
     } catch (err) {
       console.error("Failed to send invites:", err);
@@ -128,9 +128,13 @@ const InviteModal = ({
           <X size={20} />
         </button>
 
-        <h2 className="mb-6 text-xl font-bold text-white">
+        <h2 className="mb-2 text-xl font-bold text-white">
           Invite to <span className="text-amber-500">{workspaceName}</span>
         </h2>
+
+        <h3 className="mb-6 text-sm text-neutral-400">
+          Ensure they are registered users of CollabBoard.
+        </h3>
 
         <div className="space-y-4">
           {invitations.map((inv, index) => (
