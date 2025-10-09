@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ChevronRight,
   Users,
@@ -9,6 +10,7 @@ import {
   Play,
 } from "lucide-react";
 
+import { useAuth } from "../auth/useAuth";
 import { features, testimonials } from "../data";
 import Footer from "../components/Footer";
 
@@ -16,7 +18,14 @@ const LandingScreen = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
 
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+
     setIsVisible(true);
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -28,7 +37,7 @@ const LandingScreen = () => {
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [navigate, user]);
 
   return (
     <div className="fixed inset-0 bg-neutral-950 text-white/90 overflow-y-auto overflow-x-hidden">
