@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Tldraw,
   type TLUiOverrides,
@@ -33,6 +34,11 @@ const Workspace = ({
   boardScope,
   isOwner,
 }: WorkspacePropTypes) => {
+  const [currentRole, setCurrentRole] = useState<
+    "owner" | "editor" | "viewer" | null
+  >(null);
+  const [isRoleLoading, setIsRoleLoading] = useState(true);
+
   const self = useSelf();
   const others = useOthers();
 
@@ -47,6 +53,32 @@ const Workspace = ({
       name: user?.user_metadata?.name ?? "Anonymous",
     },
   });
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchRole = async () => {
+      setIsRoleLoading(true);
+
+      const { data, error } = await supabase
+        .from("document_permissions")
+        .select("role")
+        .eq("document_id", boardId)
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching role:", error);
+        setCurrentRole("viewer"); // default to viewer
+      } else if (data) {
+        setCurrentRole(data.role);
+      }
+
+      setIsRoleLoading(false);
+    };
+
+    fetchRole();
+  }, [boardId, user?.id]);
 
   const getWorkspaceImage = async (editor: Editor) => {
     const shapeIds = editor.getCurrentPageShapeIds();
@@ -174,7 +206,7 @@ const Workspace = ({
     MainMenu: CustomMainMenu,
   };
 
-  if (store.status === "loading" || !user?.id) {
+  if (store.status === "loading" || !user?.id || isRoleLoading) {
     return (
       <div className="bg-neutral-950 text-white/90 flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
@@ -199,6 +231,11 @@ const Workspace = ({
           inferDarkMode={true}
           overrides={myOverrides}
           components={components}
+          onMount={(editor) => {
+            editor.updateInstanceState({
+              isReadonly: currentRole === "viewer",
+            });
+          }}
           autoFocus
         />
       </div>
