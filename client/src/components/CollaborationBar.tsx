@@ -14,6 +14,7 @@ interface CollaborationBarPropTypes {
   boardScope: WorkspaceScope;
   isOwner: boolean;
   addPermissions: (invitations: Invitation[]) => Promise<void>;
+  loadPermissions: () => Promise<Invitation[]>;
 }
 
 const CollaborationBar = ({
@@ -23,6 +24,7 @@ const CollaborationBar = ({
   boardScope,
   isOwner,
   addPermissions,
+  loadPermissions,
 }: CollaborationBarPropTypes) => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
@@ -45,14 +47,17 @@ const CollaborationBar = ({
     );
   };
 
-  const handleLoadInvites = (): Invitation[] => {
+  const handleLoadInvites = async (): Promise<Invitation[]> => {
     const storedInvites = localStorage.getItem(
       `invitations-${userId}-${boardName}`
     );
 
-    return storedInvites
-      ? (JSON.parse(storedInvites) as Invitation[])
-      : ([] as Invitation[]);
+    if (storedInvites) {
+      return JSON.parse(storedInvites) as Invitation[];
+    }
+
+    const fetchedInvites = await loadPermissions();
+    return fetchedInvites;
   };
 
   // Filter out any undefined collaborators before mapping

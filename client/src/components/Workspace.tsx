@@ -77,8 +77,13 @@ const Workspace = ({
       setIsRoleLoading(false);
     };
 
-    fetchRole();
-  }, [boardId, user?.id]);
+    if (isOwner) {
+      setCurrentRole("owner");
+      setIsRoleLoading(false);
+    } else {
+      fetchRole();
+    }
+  }, [boardId, user?.id, isOwner]);
 
   const getWorkspaceImage = async (editor: Editor) => {
     const shapeIds = editor.getCurrentPageShapeIds();
@@ -147,6 +152,40 @@ const Workspace = ({
         throw new Error(err.message || "Failed to send invites");
       }
     }
+  };
+
+  const loadPermissions = async (): Promise<Invitation[]> => {
+    if (!user?.id) return [];
+
+    const { data, error } = await supabase
+      .from("document_permissions")
+      .select("role, profiles (email)")
+      .eq("document_id", boardId)
+      .neq("user_id", user.id);
+
+    if (error) {
+      console.error("Error loading permissions:", error);
+      return [];
+    }
+
+    const permissions = data
+      .map((permission) => {
+        if (!permission.profiles) {
+          return null;
+        }
+
+        const profilesArray = Array.isArray(permission.profiles)
+          ? permission.profiles
+          : [permission.profiles];
+
+        return {
+          email: profilesArray[0].email,
+          role: permission.role as "editor" | "viewer",
+        };
+      })
+      .filter(Boolean) as Invitation[];
+
+    return permissions;
   };
 
   const myOverrides: TLUiOverrides = {
@@ -223,6 +262,7 @@ const Workspace = ({
         boardScope={boardScope}
         isOwner={isOwner}
         addPermissions={addPermissions}
+        loadPermissions={loadPermissions}
       />
 
       <div className="w-full h-full pt-12">

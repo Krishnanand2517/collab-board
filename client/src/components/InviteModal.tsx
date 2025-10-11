@@ -8,7 +8,7 @@ interface InviteModalPropTypes {
   isOpen: boolean;
   onClose: () => void;
   onSendInvites: (invitations: Invitation[]) => Promise<void>;
-  onLoadInvites: () => Invitation[];
+  onLoadInvites: () => Promise<Invitation[]>;
   workspaceName: string;
 }
 
@@ -32,17 +32,21 @@ const InviteModal = ({
       }
     };
 
-    if (isOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-      const storedInvites = onLoadInvites();
-      setInvitations(
-        storedInvites.length === 0
-          ? [{ email: "", role: "editor" }]
-          : storedInvites
-      );
-      setError(null);
-      setIsLoading(false);
-    }
+    const loadInvites = async () => {
+      if (isOpen) {
+        window.addEventListener("keydown", handleKeyDown);
+        const storedInvites = await onLoadInvites();
+        setInvitations(
+          storedInvites.length === 0
+            ? [{ email: "", role: "editor" }]
+            : storedInvites
+        );
+        setError(null);
+        setIsLoading(false);
+      }
+    };
+
+    loadInvites();
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
