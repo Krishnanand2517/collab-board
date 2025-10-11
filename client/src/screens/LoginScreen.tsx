@@ -19,7 +19,7 @@ const LoginScreen = () => {
     password: "",
   });
 
-  const { signIn, signInWithProvider } = useAuth();
+  const { user, signIn, signInWithProvider } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,6 +28,10 @@ const LoginScreen = () => {
     "/dashboard";
 
   useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+
     setIsVisible(true);
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -39,7 +43,7 @@ const LoginScreen = () => {
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [navigate, user]);
 
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({

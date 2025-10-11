@@ -241,44 +241,6 @@ const DashboardScreen = () => {
         </nav>
 
         <main className="py-16 space-y-16">
-          {/* --- Personal Workspaces --- */}
-          <div>
-            <h2 className="text-2xl font-semibold mb-8 text-white">
-              Personal Workspaces
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* --- New Workspace --- */}
-              <div
-                onClick={handleNewPersonalClick}
-                className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
-              >
-                <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400 group-hover:animate-spinBounce" />
-                <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
-                  New Workspace
-                </span>
-              </div>
-
-              {/* --- Saved Personal Workspaces --- */}
-              {isLoading || !user ? (
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
-              ) : (
-                workspaces
-                  .filter((workspace) => workspace.scope == "personal")
-                  .map((workspace) => (
-                    <WorkspaceCard
-                      isOwner={workspace.ownerId === user.id}
-                      workspace={workspace}
-                      onLoadWorkspace={onLoadWorkspace}
-                      onRename={handleRenameWorkspace}
-                      onDelete={handleDeleteWorkspace}
-                      key={workspace.id}
-                    />
-                  ))
-              )}
-            </div>
-          </div>
-
           {/* --- Team Workspaces --- */}
           <div>
             <h2 className="text-2xl font-semibold mb-8 text-white">
@@ -303,6 +265,44 @@ const DashboardScreen = () => {
               ) : (
                 workspaces
                   .filter((workspace) => workspace.scope == "team")
+                  .map((workspace) => (
+                    <WorkspaceCard
+                      isOwner={workspace.ownerId === user.id}
+                      workspace={workspace}
+                      onLoadWorkspace={onLoadWorkspace}
+                      onRename={handleRenameWorkspace}
+                      onDelete={handleDeleteWorkspace}
+                      key={workspace.id}
+                    />
+                  ))
+              )}
+            </div>
+          </div>
+
+          {/* --- Personal Workspaces --- */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-8 text-white">
+              Personal Workspaces
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* --- New Workspace --- */}
+              <div
+                onClick={handleNewPersonalClick}
+                className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
+              >
+                <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400 group-hover:animate-spinBounce" />
+                <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
+                  New Workspace
+                </span>
+              </div>
+
+              {/* --- Saved Personal Workspaces --- */}
+              {isLoading || !user ? (
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+              ) : (
+                workspaces
+                  .filter((workspace) => workspace.scope == "personal")
                   .map((workspace) => (
                     <WorkspaceCard
                       isOwner={workspace.ownerId === user.id}

@@ -31,10 +31,14 @@ const SignupScreen = () => {
     confirmPassword: "",
   });
 
-  const { signUp, signInWithProvider } = useAuth();
+  const { user, signUp, signInWithProvider } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+
     setIsVisible(true);
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -46,7 +50,7 @@ const SignupScreen = () => {
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [navigate, user]);
 
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({
