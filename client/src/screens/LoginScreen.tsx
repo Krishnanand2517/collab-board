@@ -19,7 +19,9 @@ const LoginScreen = () => {
     password: "",
   });
 
-  const { user, signIn, signInWithProvider } = useAuth();
+  const [forgotPassword, setForgotPassword] = useState(false);
+
+  const { user, signIn, signInWithProvider, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -88,6 +90,25 @@ const LoginScreen = () => {
       console.error(error);
     } finally {
       setSocialLoading(null);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setIsLoading(true);
+
+    try {
+      const { error } = await resetPassword(formData.email);
+
+      if (error) {
+        setError(error.message);
+      } else {
+        navigate("/reset-password", { state: { email: formData.email } });
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -191,47 +212,52 @@ const LoginScreen = () => {
               </div>
 
               {/* Password Input */}
-              <div className="space-y-2">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-white/80"
-                >
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="w-full bg-white/5 border border-white/20 rounded-xl px-12 py-4 pr-12 text-white placeholder-white/40 focus:border-amber-500/50 focus:bg-white/10 focus:outline-none transition-all duration-300"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors duration-300"
+              {!forgotPassword && (
+                <div className="space-y-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-white/80"
                   >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="w-full bg-white/5 border border-white/20 rounded-xl px-12 py-4 pr-12 text-white placeholder-white/40 focus:border-amber-500/50 focus:bg-white/10 focus:outline-none transition-all duration-300"
+                      placeholder="Enter your password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors duration-300"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Forgot Password */}
               <div className="w-full text-right">
-                <a
-                  href="#"
-                  className="text-sm text-amber-400 hover:text-amber-300 transition-colors duration-300"
+                <button
+                  type="button"
+                  onClick={() => setForgotPassword(!forgotPassword)}
+                  className="text-sm text-amber-400 hover:text-amber-300 transition-colors duration-300 cursor-pointer"
                 >
-                  Forgot password?
-                </a>
+                  {forgotPassword
+                    ? "I will enter the password"
+                    : "Forgot password?"}
+                </button>
               </div>
 
               {/* Error message */}
@@ -241,21 +267,38 @@ const LoginScreen = () => {
                 </div>
               )}
 
-              {/* Log In Button */}
-              <button
-                type="submit"
-                disabled={isLoading || !isFormValid}
-                className={`w-full px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform
+              {/* Log In or Reset Button */}
+              {forgotPassword ? (
+                <button
+                  type="button"
+                  disabled={isLoading || !formData.email}
+                  onClick={() => handleForgotPassword()}
+                  className={`w-full px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300
+                  ${
+                    formData.email && !isLoading
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 cursor-pointer hover:shadow-amber-500/25"
+                      : "bg-gray-500 cursor-not-allowed opacity-50"
+                  }
+                `}
+                >
+                  Reset Password
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isLoading || !isFormValid}
+                  className={`w-full px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform
                   ${
                     isFormValid && !isLoading
                       ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 cursor-pointer hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/25"
                       : "bg-gray-500 cursor-not-allowed opacity-50"
                   }
                 `}
-              >
-                {isLoading ? "Logging in..." : "Log In"}
-                <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
-              </button>
+                >
+                  {isLoading ? "Logging in..." : "Log In"}
+                  <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
+                </button>
+              )}
             </form>
 
             {/* Divider */}

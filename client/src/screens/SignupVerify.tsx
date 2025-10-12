@@ -10,7 +10,7 @@ const SignupVerify = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { verifyOtp, resendOtp } = useAuth();
+  const { verifyOtpSignup, resendOtp } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const email = (location.state as { email: string })?.email;
@@ -21,7 +21,7 @@ const SignupVerify = () => {
     setError("");
 
     try {
-      const { error } = await verifyOtp(email, token);
+      const { error } = await verifyOtpSignup(email, token);
 
       if (error) {
         setError(error.message);

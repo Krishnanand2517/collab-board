@@ -1,9 +1,11 @@
 import type {
+  AuthError,
   AuthResponse,
   OAuthResponse,
   PostgrestError,
   Session,
   User,
+  UserResponse,
 } from "@supabase/supabase-js";
 import { createContext } from "react";
 
@@ -32,7 +34,19 @@ export interface AuthContextType {
   ) => Promise<AuthResponse>;
   signInWithProvider: (provider: "google" | "github") => Promise<OAuthResponse>;
   signOut: () => Promise<void>;
-  verifyOtp: (email: string, token: string) => Promise<AuthResponse>;
+  resetPassword: (email: string) => Promise<
+    | {
+        data: object;
+        error: null;
+      }
+    | {
+        data: null;
+        error: AuthError;
+      }
+  >;
+  updatePassword: (newPassword: string) => Promise<UserResponse>;
+  verifyOtpSignup: (email: string, token: string) => Promise<AuthResponse>;
+  verifyOtpReset: (email: string, token: string) => Promise<AuthResponse>;
   resendOtp: (email: string) => Promise<AuthResponse>;
   updateProfile: (
     updates: Partial<UserProfile>

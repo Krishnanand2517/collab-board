@@ -12,6 +12,7 @@ import LoginScreen from "./screens/LoginScreen.tsx";
 import SignupScreen from "./screens/SignupScreen.tsx";
 import SignupVerify from "./screens/SignupVerify.tsx";
 import AuthCallback from "./components/AuthCallback.tsx";
+import ResetPassword from "./screens/ResetPassword.tsx";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "/signup-verify",
         element: <SignupVerify />,
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />,
       },
       {
         path: "/auth/callback",

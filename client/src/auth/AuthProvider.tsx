@@ -98,13 +98,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const signUp = async (name: string, email: string, password: string) => {
-    const response = await supabase.auth.signUp({
+    return await supabase.auth.signUp({
       email,
       password,
       options: { data: { name } },
     });
-
-    return response;
   };
 
   const signInWithProvider = async (provider: "google" | "github") => {
@@ -130,14 +128,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const verifyOtp = async (email: string, token: string) => {
-    const response = await supabase.auth.verifyOtp({
+  const resetPassword = async (email: string) => {
+    return await supabase.auth.resetPasswordForEmail(email);
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    return await supabase.auth.updateUser({ password: newPassword });
+  };
+
+  const verifyOtpSignup = async (email: string, token: string) => {
+    return await supabase.auth.verifyOtp({
       email,
       token,
       type: "signup",
     });
+  };
 
-    return response;
+  const verifyOtpReset = async (email: string, token: string) => {
+    return await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "recovery",
+    });
   };
 
   const resendOtp = async (email: string) => {
@@ -195,7 +207,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     signUp,
     signInWithProvider,
     signOut,
-    verifyOtp,
+    resetPassword,
+    updatePassword,
+    verifyOtpSignup,
+    verifyOtpReset,
     resendOtp,
     updateProfile,
     deleteUser,
