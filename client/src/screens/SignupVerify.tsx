@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/useAuth";
@@ -9,11 +9,22 @@ const SignupVerify = () => {
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [countdown, setCountdown] = useState(30);
 
   const { verifyOtpSignup, resendOtp } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const email = (location.state as { email: string })?.email;
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+
+    const intervalId = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [countdown]);
 
   const handleVerify = async () => {
     if (!token || token.length !== 6) return;
@@ -37,7 +48,9 @@ const SignupVerify = () => {
   };
 
   const handleResend = async () => {
-    setIsLoading(true);
+    if (countdown > 0) return;
+
+    setCountdown(30); // reset countdown timer optimistically
     setError("");
 
     try {
@@ -49,8 +62,6 @@ const SignupVerify = () => {
     } catch (error) {
       setError("An unexpected error occurred");
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -91,10 +102,15 @@ const SignupVerify = () => {
 
             <button
               onClick={handleResend}
-              disabled={isLoading}
-              className="w-full py-2 text-amber-400 font-medium hover:text-amber-300 transition-colors duration-300"
+              disabled={isLoading || countdown > 0}
+              className={`w-full py-2 font-medium transition-colors duration-300
+                    ${
+                      countdown > 0
+                        ? "text-neutral-500 cursor-not-allowed"
+                        : "text-amber-400 hover:text-amber-300"
+                    }`}
             >
-              Resend OTP
+              {countdown > 0 ? `Resend OTP in ${countdown}s` : "Resend OTP"}
             </button>
           </div>
         </div>

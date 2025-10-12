@@ -153,9 +153,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const resendOtp = async (email: string) => {
-    const response = await supabase.auth.signInWithOtp({ email });
-
-    return response;
+    return await supabase.auth.signInWithOtp({ email });
   };
 
   const updateProfile = async (
