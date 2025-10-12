@@ -139,6 +139,7 @@ const Workspace = ({
           invitations,
         },
       });
+      console.log(invitations);
 
       if (error) {
         console.error("Error invoking function:", error);

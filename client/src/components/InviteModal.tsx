@@ -78,7 +78,6 @@ const InviteModal = ({
 
   const handleSubmit = async () => {
     setError(null);
-    const validInvitations: Invitation[] = [];
     let hasError = false;
 
     // Validate all entries
@@ -89,20 +88,18 @@ const InviteModal = ({
       } else if (!isValidEmail(inv.email)) {
         hasError = true;
         setError(`"${inv.email}" is not a valid email address.`);
-      } else {
-        validInvitations.push(inv);
       }
     });
 
     if (hasError) return;
-    if (validInvitations.length === 0) {
-      setError("Please add at least one valid invitation.");
-      return;
-    }
+
+    const invitesToSubmit = invitations.filter(
+      (inv) => inv.email.trim() !== ""
+    );
 
     setIsLoading(true);
     try {
-      await onSendInvites(validInvitations);
+      await onSendInvites(invitesToSubmit);
       onClose();
     } catch (err) {
       console.error("Failed to send invites:", err);
@@ -111,10 +108,6 @@ const InviteModal = ({
       setIsLoading(false);
     }
   };
-
-  const isSendButtonEnabled = invitations.some(
-    (inv) => inv.email.trim() !== "" && isValidEmail(inv.email)
-  );
 
   const modalContent = (
     <div
@@ -141,6 +134,14 @@ const InviteModal = ({
         </h3>
 
         <div className="space-y-4">
+          {invitations.length === 0 && (
+            <div className="flex justify-center items-center h-24 text-center text-neutral-500 border-2 border-dashed border-neutral-800 rounded-lg">
+              <p>
+                No one has access. <br /> Click below to add a member.
+              </p>
+            </div>
+          )}
+
           {invitations.map((inv, index) => (
             <div key={index} className="flex items-center space-x-3">
               <input
@@ -166,15 +167,14 @@ const InviteModal = ({
                 <option value="editor">Editor</option>
                 <option value="viewer">Viewer</option>
               </select>
-              {invitations.length > 1 && ( // Only show remove button if more than one row
-                <button
-                  onClick={() => removeInvitationRow(index)}
-                  className="p-2 text-neutral-400 transition-colors hover:text-red-500"
-                  title="Remove invitation"
-                >
-                  <Trash2 size={20} />
-                </button>
-              )}
+
+              <button
+                onClick={() => removeInvitationRow(index)}
+                className="p-2 text-neutral-400 transition-colors hover:text-red-500 cursor-pointer"
+                title="Remove invitation"
+              >
+                <Trash2 size={20} />
+              </button>
             </div>
           ))}
 
@@ -198,10 +198,10 @@ const InviteModal = ({
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!isSendButtonEnabled || isLoading}
+            disabled={isLoading}
             className="rounded-md bg-amber-500 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-600 disabled:cursor-not-allowed disabled:bg-neutral-600"
           >
-            {isLoading ? "..." : "Confirm"}
+            {isLoading ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>
