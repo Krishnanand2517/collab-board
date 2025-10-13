@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 
 import supabase from "../db/supabaseClient";
 import type {
@@ -13,6 +13,7 @@ import Footer from "../components/Footer";
 import NewWorkspaceModal from "../components/NewWorkspaceModal";
 import WorkspaceCard from "../components/WorkspaceCard";
 import ProfileModal from "../components/ProfileModal";
+import collabLogo from "/collab-logo.svg";
 
 const DashboardScreen = () => {
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
@@ -216,7 +217,7 @@ const DashboardScreen = () => {
         <nav className="relative z-10 flex items-center justify-between py-6 border-b border-white/10">
           <div className="flex items-center space-x-3">
             <div className="w-9 h-9 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center shadow-md shadow-orange-500/20">
-              <Sparkles className="w-5 h-5 text-white" />
+              <img src={collabLogo} alt="CollabBoard Logo" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
               CollabBoard

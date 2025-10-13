@@ -1,18 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  ChevronRight,
-  Users,
-  Zap,
-  Globe,
-  Sparkles,
-  ArrowRight,
-  Play,
-} from "lucide-react";
+import { Users, Zap, Globe, ArrowRight, Play } from "lucide-react";
 
 import { useAuth } from "../auth/useAuth";
 import { features, testimonials } from "../data";
 import Footer from "../components/Footer";
+import collabLogo from "/collab-logo.svg";
 
 const LandingScreen = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -75,7 +68,7 @@ const LandingScreen = () => {
       >
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
+            <img src={collabLogo} alt="CollabBoard Logo" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
             CollabBoard
@@ -104,11 +97,12 @@ const LandingScreen = () => {
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
         }`}
       >
-        <div className="inline-flex items-center px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-sm font-medium mb-8">
+        {/* TODO: Enable AI features */}
+        {/* <div className="inline-flex items-center px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-sm font-medium mb-8">
           <Sparkles className="w-4 h-4 mr-2" />
           Now with AI-powered insights
           <ChevronRight className="w-4 h-4 ml-2" />
-        </div>
+        </div> */}
 
         <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-amber-100 to-amber-300 bg-clip-text text-transparent leading-tight">
           Collaborate

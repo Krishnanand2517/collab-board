@@ -663,6 +663,15 @@ const TermsOfService = () => {
         - The measures taken or proposed to address the breach and mitigate
         possible adverse effects
       </p>
+
+      <h2 className="mt-4 text-xl font-bold">Contact Us</h2>
+      <p>
+        If you have any questions about this Terms of Service, please contact us
+        by email:{" "}
+        <a href="mailto:krishnanand2517@gmail.com" className="text-neutral-400">
+          krishnanand2517@gmail.com
+        </a>
+      </p>
     </div>
   );
 };

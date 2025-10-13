@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Sparkles, ArrowRight, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa6";
 import { useAuth } from "../auth/useAuth";
+import collabLogo from "/collab-logo.svg";
 
 const LoginScreen = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -150,7 +151,7 @@ const LoginScreen = () => {
       >
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
+            <img src={collabLogo} alt="CollabBoard Logo" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
             CollabBoard
