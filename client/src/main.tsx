@@ -13,6 +13,8 @@ import SignupScreen from "./screens/SignupScreen.tsx";
 import SignupVerify from "./screens/SignupVerify.tsx";
 import AuthCallback from "./components/AuthCallback.tsx";
 import ResetPassword from "./screens/ResetPassword.tsx";
+import PrivacyPolicy from "./screens/PrivacyPolicy.tsx";
+import TermsOfService from "./screens/TermsOfService.tsx";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +60,14 @@ const router = createBrowserRouter([
       {
         path: "/auth/callback",
         element: <AuthCallback />,
+      },
+      {
+        path: "/privacy-policy",
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: "/terms-of-service",
+        element: <TermsOfService />,
       },
     ],
   },

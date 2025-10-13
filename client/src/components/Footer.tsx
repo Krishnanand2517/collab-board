@@ -15,22 +15,18 @@ const Footer = () => {
 
         <div className="flex space-x-8 text-white/60">
           <a
-            href="#"
+            href="/privacy-policy"
+            target="_blank"
             className="hover:text-amber-400 transition-colors duration-300"
           >
             Privacy
           </a>
           <a
-            href="#"
+            href="/terms-of-service"
+            target="_blank"
             className="hover:text-amber-400 transition-colors duration-300"
           >
             Terms
-          </a>
-          <a
-            href="#"
-            className="hover:text-amber-400 transition-colors duration-300"
-          >
-            Support
           </a>
         </div>
       </div>

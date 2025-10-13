@@ -388,14 +388,16 @@ const SignupScreen = () => {
             <p className="text-white/40 text-sm">
               By signing up, you agree to our{" "}
               <a
-                href="#"
+                href="/terms-of-service"
+                target="_blank"
                 className="text-amber-400 hover:text-amber-300 transition-colors duration-300"
               >
                 Terms of Service
               </a>{" "}
               and{" "}
               <a
-                href="#"
+                href="/privacy-policy"
+                target="_blank"
                 className="text-amber-400 hover:text-amber-300 transition-colors duration-300"
               >
                 Privacy Policy
