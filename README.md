@@ -16,6 +16,10 @@ You can check out CollabBoard [here](https://collab-board-app-one.vercel.app/).
 
 ![](ReadmeImgs/collab-2.jpg)
 
+### Video
+
+[![Watch the video](https://img.youtube.com/vi/TFns7vs7eS4/0.jpg)](https://youtu.be/TFns7vs7eS4)
+
 ---
 
 ## 🌟 Features

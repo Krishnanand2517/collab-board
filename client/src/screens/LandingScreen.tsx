@@ -126,10 +126,14 @@ const LandingScreen = () => {
             Start Collaborating
             <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
           </a>
-          <button className="border border-white/20 px-8 py-4 rounded-xl font-semibold text-lg hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 cursor-pointer group">
+          <a
+            href="https://youtu.be/TFns7vs7eS4"
+            target="_blank"
+            className="border border-white/20 px-8 py-4 rounded-xl font-semibold text-lg hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 cursor-pointer group"
+          >
             <Play className="w-5 h-5 mr-2 inline-block" />
             Watch Demo
-          </button>
+          </a>
         </div>
 
         {/* Floating Cards Animation */}
@@ -260,9 +264,13 @@ const LandingScreen = () => {
               Get Started Free
               <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
             </a>
-            <button className="border border-white/20 px-8 py-4 rounded-xl font-semibold text-lg hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 cursor-pointer">
+            <a
+              href="https://youtu.be/TFns7vs7eS4"
+              target="_blank"
+              className="border border-white/20 px-8 py-4 rounded-xl font-semibold text-lg hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 cursor-pointer"
+            >
               Watch Demo
-            </button>
+            </a>
           </div>
         </div>
       </section>
