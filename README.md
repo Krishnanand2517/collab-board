@@ -12,9 +12,9 @@ You can check out CollabBoard [here](https://collab-board-app-one.vercel.app/).
 
 ### Screenshots
 
-![](../ReadmeImgs/collab-1.jpg)
+![](ReadmeImgs/collab-1.jpg)
 
-![](../ReadmeImgs/collab-2.jpg)
+![](ReadmeImgs/collab-2.jpg)
 
 ---
 
