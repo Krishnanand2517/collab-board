@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer utilities {
+  .h-screen {
+    height: 100dvh;
+  }
+}
+
 @theme {
   --animate-spinBounce: spinBounce 0.3s ease-in-out;
   @keyframes spinBounce {
