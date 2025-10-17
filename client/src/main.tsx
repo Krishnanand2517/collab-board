@@ -15,6 +15,7 @@ import AuthCallback from "./components/AuthCallback.tsx";
 import ResetPassword from "./screens/ResetPassword.tsx";
 import PrivacyPolicy from "./screens/PrivacyPolicy.tsx";
 import TermsOfService from "./screens/TermsOfService.tsx";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const router = createBrowserRouter([
   {
@@ -76,5 +77,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <AuthProvider>
     <RouterProvider router={router} />
+    <SpeedInsights />
   </AuthProvider>
 );

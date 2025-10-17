@@ -149,14 +149,14 @@ const LoginScreen = () => {
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
         }`}
       >
-        <div className="flex items-center space-x-2">
+        <a href="/" className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
             <img src={collabLogo} alt="CollabBoard Logo" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
             CollabBoard
           </span>
-        </div>
+        </a>
 
         <div className="text-white/70">
           Don't have an account?
