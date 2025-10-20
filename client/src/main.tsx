@@ -1,5 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import "./index.css";
 import App from "./App.tsx";
@@ -15,7 +17,6 @@ import AuthCallback from "./components/AuthCallback.tsx";
 import ResetPassword from "./screens/ResetPassword.tsx";
 import PrivacyPolicy from "./screens/PrivacyPolicy.tsx";
 import TermsOfService from "./screens/TermsOfService.tsx";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const router = createBrowserRouter([
   {
@@ -77,6 +78,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <AuthProvider>
     <RouterProvider router={router} />
+    <Analytics />
     <SpeedInsights />
   </AuthProvider>
 );
