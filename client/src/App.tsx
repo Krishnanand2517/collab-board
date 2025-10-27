@@ -7,7 +7,16 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import supabase from "./db/supabaseClient";
 
 const RouteFallback = (
-  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+  <div className="flex items-center justify-center min-h-screen bg-neutral-950">
+    <div className="flex flex-col items-center gap-4 animate-fadeIn">
+      <div className="relative">
+        <div className="h-10 w-10 rounded-full border-4 border-amber-400 border-t-transparent animate-spin-slow"></div>
+      </div>
+      <p className="text-amber-400 text-sm tracking-wide opacity-80">
+        Loading...
+      </p>
+    </div>
+  </div>
 );
 
 const App = () => {
