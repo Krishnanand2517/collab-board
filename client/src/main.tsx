@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
@@ -7,16 +8,22 @@ import "./index.css";
 import App from "./App.tsx";
 import { AuthProvider } from "./auth/AuthProvider.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
-import DashboardScreen from "./screens/DashboardScreen.tsx";
-import LandingScreen from "./screens/LandingScreen.tsx";
-import WorkScreen from "./screens/WorkScreen.tsx";
-import LoginScreen from "./screens/LoginScreen.tsx";
-import SignupScreen from "./screens/SignupScreen.tsx";
-import SignupVerify from "./screens/SignupVerify.tsx";
-import AuthCallback from "./components/AuthCallback.tsx";
-import ResetPassword from "./screens/ResetPassword.tsx";
-import PrivacyPolicy from "./screens/PrivacyPolicy.tsx";
-import TermsOfService from "./screens/TermsOfService.tsx";
+
+// Perform code splitting
+const DashboardScreen = lazy(() => import("./screens/DashboardScreen.tsx"));
+const LandingScreen = lazy(() => import("./screens/LandingScreen.tsx"));
+const WorkScreen = lazy(() => import("./screens/WorkScreen.tsx"));
+const LoginScreen = lazy(() => import("./screens/LoginScreen.tsx"));
+const SignupScreen = lazy(() => import("./screens/SignupScreen.tsx"));
+const SignupVerify = lazy(() => import("./screens/SignupVerify.tsx"));
+const AuthCallback = lazy(() => import("./components/AuthCallback.tsx"));
+const ResetPassword = lazy(() => import("./screens/ResetPassword.tsx"));
+const PrivacyPolicy = lazy(() => import("./screens/PrivacyPolicy.tsx"));
+const TermsOfService = lazy(() => import("./screens/TermsOfService.tsx"));
+
+const RouteFallback = (
+  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+);
 
 const router = createBrowserRouter([
   {
@@ -25,13 +32,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <LandingScreen />,
+        element: (
+          <Suspense fallback={RouteFallback}>
+            <LandingScreen />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard",
         element: (
           <ProtectedRoute>
-            <DashboardScreen />
+            <Suspense fallback={RouteFallback}>
+              <DashboardScreen />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
@@ -39,37 +52,67 @@ const router = createBrowserRouter([
         path: "/board/:boardId",
         element: (
           <ProtectedRoute>
-            <WorkScreen />
+            <Suspense fallback={RouteFallback}>
+              <WorkScreen />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
       {
         path: "/login",
-        element: <LoginScreen />,
+        element: (
+          <Suspense fallback={RouteFallback}>
+            <LoginScreen />
+          </Suspense>
+        ),
       },
       {
         path: "/signup",
-        element: <SignupScreen />,
+        element: (
+          <Suspense fallback={RouteFallback}>
+            <SignupScreen />
+          </Suspense>
+        ),
       },
       {
         path: "/signup-verify",
-        element: <SignupVerify />,
+        element: (
+          <Suspense fallback={RouteFallback}>
+            <SignupVerify />
+          </Suspense>
+        ),
       },
       {
         path: "/reset-password",
-        element: <ResetPassword />,
+        element: (
+          <Suspense fallback={RouteFallback}>
+            <ResetPassword />
+          </Suspense>
+        ),
       },
       {
         path: "/auth/callback",
-        element: <AuthCallback />,
+        element: (
+          <Suspense fallback={RouteFallback}>
+            <AuthCallback />
+          </Suspense>
+        ),
       },
       {
         path: "/privacy-policy",
-        element: <PrivacyPolicy />,
+        element: (
+          <Suspense fallback={RouteFallback}>
+            <PrivacyPolicy />
+          </Suspense>
+        ),
       },
       {
         path: "/terms-of-service",
-        element: <TermsOfService />,
+        element: (
+          <Suspense fallback={RouteFallback}>
+            <TermsOfService />
+          </Suspense>
+        ),
       },
     ],
   },
