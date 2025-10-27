@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Tldraw,
   type TLUiOverrides,
@@ -45,6 +46,7 @@ const Workspace = ({
   const collaborators = [self, ...others];
 
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const store = useStorageStore({
     user: {
@@ -222,7 +224,7 @@ const Workspace = ({
         readonlyOk: true,
         async onSelect() {
           const success = await onSaveWorkspace(editor);
-          if (success) window.location.href = "/dashboard";
+          if (success) navigate("/dashboard");
           else
             helpers.addToast({
               title: "Failed",

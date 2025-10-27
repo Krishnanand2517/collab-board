@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Users, Zap, Globe, ArrowRight, Play } from "lucide-react";
 
 import { useAuth } from "../auth/useAuth";
@@ -76,18 +76,18 @@ const LandingScreen = () => {
         </div>
 
         <div className="hidden md:flex items-center space-x-8">
-          <a
-            href="/login"
+          <Link
+            to="/login"
             className="text-white/70 hover:text-amber-400 font-medium transition-colors duration-300"
           >
             Login
-          </a>
-          <a
-            href="/signup"
+          </Link>
+          <Link
+            to="/signup"
             className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 rounded-lg font-medium hover:from-amber-400 hover:to-orange-400 transition-all duration-300 transform hover:scale-105"
           >
             Get Started
-          </a>
+          </Link>
         </div>
       </nav>
 
@@ -119,13 +119,13 @@ const LandingScreen = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             className="bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 rounded-xl font-semibold text-lg hover:from-amber-400 hover:to-orange-400 transition-all duration-300 cursor-pointer hover:shadow-2xl hover:shadow-amber-500/25 group"
           >
             Start Collaborating
             <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
-          </a>
+          </Link>
           <a
             href="https://youtu.be/TFns7vs7eS4"
             target="_blank"
@@ -257,13 +257,13 @@ const LandingScreen = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-            <a
-              href="/signup"
+            <Link
+              to="/signup"
               className="bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 rounded-xl font-semibold text-lg hover:from-amber-400 hover:to-orange-400 transition-all duration-300 cursor-pointer group"
             >
               Get Started Free
               <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-300" />
-            </a>
+            </Link>
             <a
               href="https://youtu.be/TFns7vs7eS4"
               target="_blank"

@@ -1,6 +1,14 @@
+import { Suspense } from "react";
 import { LiveblocksProvider } from "@liveblocks/react/suspense";
 import { Outlet } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
 import supabase from "./db/supabaseClient";
+
+const RouteFallback = (
+  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+);
 
 const App = () => {
   return (
@@ -20,8 +28,13 @@ const App = () => {
       }}
     >
       <div className="bg-neutral-950 text-white/90 min-h-screen p-6 md:py-10 md:px-20 lg:px-52 2xl:px-80">
-        <Outlet />
+        <Suspense fallback={RouteFallback}>
+          <Outlet />
+        </Suspense>
       </div>
+
+      <Analytics />
+      <SpeedInsights />
     </LiveblocksProvider>
   );
 };

@@ -1,12 +1,11 @@
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import "./index.css";
 import App from "./App.tsx";
 import { AuthProvider } from "./auth/AuthProvider.tsx";
+import InitialLoaderGate from "./components/InitialLoaderGate.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 // Perform code splitting
@@ -21,10 +20,6 @@ const ResetPassword = lazy(() => import("./screens/ResetPassword.tsx"));
 const PrivacyPolicy = lazy(() => import("./screens/PrivacyPolicy.tsx"));
 const TermsOfService = lazy(() => import("./screens/TermsOfService.tsx"));
 
-const RouteFallback = (
-  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
-);
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -32,19 +27,13 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: (
-          <Suspense fallback={RouteFallback}>
-            <LandingScreen />
-          </Suspense>
-        ),
+        element: <LandingScreen />,
       },
       {
         path: "/dashboard",
         element: (
           <ProtectedRoute>
-            <Suspense fallback={RouteFallback}>
-              <DashboardScreen />
-            </Suspense>
+            <DashboardScreen />
           </ProtectedRoute>
         ),
       },
@@ -52,85 +41,25 @@ const router = createBrowserRouter([
         path: "/board/:boardId",
         element: (
           <ProtectedRoute>
-            <Suspense fallback={RouteFallback}>
-              <WorkScreen />
-            </Suspense>
+            <WorkScreen />
           </ProtectedRoute>
         ),
       },
-      {
-        path: "/login",
-        element: (
-          <Suspense fallback={RouteFallback}>
-            <LoginScreen />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/signup",
-        element: (
-          <Suspense fallback={RouteFallback}>
-            <SignupScreen />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/signup-verify",
-        element: (
-          <Suspense fallback={RouteFallback}>
-            <SignupVerify />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/reset-password",
-        element: (
-          <Suspense fallback={RouteFallback}>
-            <ResetPassword />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/auth/callback",
-        element: (
-          <Suspense fallback={RouteFallback}>
-            <AuthCallback />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/privacy-policy",
-        element: (
-          <Suspense fallback={RouteFallback}>
-            <PrivacyPolicy />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/terms-of-service",
-        element: (
-          <Suspense fallback={RouteFallback}>
-            <TermsOfService />
-          </Suspense>
-        ),
-      },
+      { path: "/login", element: <LoginScreen /> },
+      { path: "/signup", element: <SignupScreen /> },
+      { path: "/signup-verify", element: <SignupVerify /> },
+      { path: "/reset-password", element: <ResetPassword /> },
+      { path: "/auth/callback", element: <AuthCallback /> },
+      { path: "/privacy-policy", element: <PrivacyPolicy /> },
+      { path: "/terms-of-service", element: <TermsOfService /> },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")!).render(
   <AuthProvider>
-    <RouterProvider router={router} />
-    <Analytics />
-    <SpeedInsights />
+    <InitialLoaderGate>
+      <RouterProvider router={router} />
+    </InitialLoaderGate>
   </AuthProvider>
 );
-
-// Fade out splash screen
-window.addEventListener("load", () => {
-  const loader = document.getElementById("loader");
-  if (loader) {
-    loader.style.opacity = "0";
-    setTimeout(() => loader.remove(), 400);
-  }
-});

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react";
 
 import { FcGoogle } from "react-icons/fc";
@@ -149,23 +149,23 @@ const LoginScreen = () => {
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
         }`}
       >
-        <a href="/" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
             <img src={collabLogo} alt="CollabBoard Logo" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
             CollabBoard
           </span>
-        </a>
+        </Link>
 
         <div className="text-white/70">
           Don't have an account?
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             className="text-amber-400 hover:text-amber-300 ml-1 font-medium transition-colors duration-300"
           >
             Sign up
-          </a>
+          </Link>
         </div>
       </nav>
 
