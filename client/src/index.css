@@ -27,6 +27,12 @@
   }
 }
 
+html, body, #root {
+  background: #0a0a0a;
+  margin: 0;
+  height: 100%;
+}
+
 #root {
   opacity: 0;
   animation: fadeInRoot 0.6s ease 0.3s forwards;
@@ -55,4 +61,29 @@
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Scrollbar customization */
+/* For Chrome, Edge, and Safari */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0e0e0e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #232323;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1f1f1f #0a0a0a;
 }
