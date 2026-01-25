@@ -130,8 +130,8 @@ const DashboardScreen = () => {
 
     setWorkspaces((prevWorkspaces) =>
       prevWorkspaces.map((ws) =>
-        ws.id === id ? { ...ws, name: newName, updatedAt: now } : ws
-      )
+        ws.id === id ? { ...ws, name: newName, updatedAt: now } : ws,
+      ),
     );
   };
 
@@ -162,7 +162,7 @@ const DashboardScreen = () => {
     }
 
     setWorkspaces((prevWorkspaces) =>
-      prevWorkspaces.filter((ws) => ws.id !== id)
+      prevWorkspaces.filter((ws) => ws.id !== id),
     );
   };
 
@@ -189,7 +189,7 @@ const DashboardScreen = () => {
   };
 
   const handleLogout: React.MouseEventHandler<HTMLButtonElement> = async (
-    e
+    e,
   ) => {
     e.preventDefault();
 
@@ -211,30 +211,38 @@ const DashboardScreen = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-neutral-950 text-white/90 overflow-y-auto overflow-x-hidden">
+    <div className="fixed inset-0 bg-[#0a0a0a] text-neutral-200 overflow-y-auto overflow-x-hidden">
+      {/* Grain Texture Overlay */}
+      <div
+        className="fixed inset-0 opacity-10 pointer-events-none z-50"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
       <div className="px-6 md:px-20 lg:px-52 2xl:px-80">
         {/* --- Navigation --- */}
-        <nav className="relative z-10 flex items-center justify-between py-6 border-b border-white/10">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center shadow-md shadow-orange-500/20">
+        <nav className="relative z-10 flex items-center justify-between py-8 border-b border-neutral-800/50">
+          <div className="flex items-center space-x-3 cursor-pointer">
+            <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/10">
               <img src={collabLogo} alt="CollabBoard Logo" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+            <span className="text-xl font-semibold tracking-tight text-white">
               CollabBoard
             </span>
           </div>
 
-          <div className="flex items-center space-x-6 text-sm font-medium text-neutral-300">
+          <div className="flex items-center space-x-6 text-sm font-medium text-neutral-400">
             <button
               onClick={() => setIsProfileModalOpen(true)}
-              className="cursor-pointer hover:text-amber-400 transition-colors duration-300"
+              className="cursor-pointer hover:text-white transition-colors duration-200 tracking-tight"
             >
               {userProfile ? userProfile.name : "Profile"}
             </button>
             <button
               disabled={isLoading}
               onClick={handleLogout}
-              className="cursor-pointer hover:text-amber-400 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="cursor-pointer hover:text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed tracking-tight"
             >
               {isLoading ? "Loading..." : "Logout"}
             </button>
@@ -244,25 +252,25 @@ const DashboardScreen = () => {
         <main className="py-16 space-y-16">
           {/* --- Team Workspaces --- */}
           <div>
-            <h2 className="text-2xl font-semibold mb-8 text-white">
+            <h2 className="text-3xl font-bold mb-8 text-white tracking-tight">
               Team Workspaces
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* --- New Workspace --- */}
               <div
                 onClick={handleNewTeamClick}
-                className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
+                className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-3 border border-dashed border-neutral-700 bg-neutral-900/30 transition-all duration-200 hover:border-emerald-500 hover:bg-neutral-900/50"
               >
-                <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400 group-hover:animate-spinBounce" />
-                <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
+                <PlusCircle className="h-8 w-8 text-neutral-500 transition-colors duration-200 group-hover:text-emerald-500 group-hover:animate-spinBounce" />
+                <span className="font-semibold text-base text-neutral-500 transition-colors duration-200 group-hover:text-emerald-500 tracking-tight">
                   New Workspace
                 </span>
               </div>
 
               {/* --- Saved Team Workspaces --- */}
               {isLoading || !user ? (
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mx-auto"></div>
               ) : (
                 workspaces
                   .filter((workspace) => workspace.scope == "team")
@@ -282,25 +290,25 @@ const DashboardScreen = () => {
 
           {/* --- Personal Workspaces --- */}
           <div>
-            <h2 className="text-2xl font-semibold mb-8 text-white">
+            <h2 className="text-3xl font-bold mb-8 text-white tracking-tight">
               Personal Workspaces
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* --- New Workspace --- */}
               <div
                 onClick={handleNewPersonalClick}
-                className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 bg-neutral-900/50 transition-all duration-300 hover:border-amber-400/80 hover:bg-neutral-900"
+                className="group flex h-52 cursor-pointer flex-col items-center justify-center gap-3 border border-dashed border-neutral-700 bg-neutral-900/30 transition-all duration-200 hover:border-emerald-500 hover:bg-neutral-900/50"
               >
-                <PlusCircle className="h-7 w-7 text-neutral-400 transition-colors duration-300 group-hover:text-amber-400 group-hover:animate-spinBounce" />
-                <span className="font-bold text-lg text-neutral-400 transition-colors duration-300 group-hover:text-amber-400">
+                <PlusCircle className="h-8 w-8 text-neutral-500 transition-colors duration-200 group-hover:text-emerald-500 group-hover:animate-spinBounce" />
+                <span className="font-semibold text-base text-neutral-500 transition-colors duration-200 group-hover:text-emerald-500 tracking-tight">
                   New Workspace
                 </span>
               </div>
 
               {/* --- Saved Personal Workspaces --- */}
               {isLoading || !user ? (
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mx-auto"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mx-auto"></div>
               ) : (
                 workspaces
                   .filter((workspace) => workspace.scope == "personal")
