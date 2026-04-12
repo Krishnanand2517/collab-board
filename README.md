@@ -4,23 +4,9 @@
 
 This project demonstrates modern frontend architecture, real-time state management, and product-level UI/UX design.
 
----
-
 ## Live Link
 
-You can check out CollabBoard [here](https://collab-board-app-one.vercel.app/).
-
-### Screenshots
-
-![](ReadmeImgs/collab-1.jpg)
-
-![](ReadmeImgs/collab-2.jpg)
-
-### Video
-
-[![Watch the video](https://img.youtube.com/vi/TFns7vs7eS4/0.jpg)](https://youtu.be/TFns7vs7eS4)
-
----
+You can check out CollabBoard [here](https://collab-board.krishnanand.info/).
 
 ## 🌟 Features
 
@@ -31,8 +17,6 @@ You can check out CollabBoard [here](https://collab-board-app-one.vercel.app/).
 - Seamless multi-client synchronization
 - Responsive UI for desktop and tablet screens
 
----
-
 ## 🛠️ Tech Stack
 
 - **Frontend**: [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
@@ -40,8 +24,6 @@ You can check out CollabBoard [here](https://collab-board-app-one.vercel.app/).
 - **Authentication & Storage**: [Supabase](https://supabase.com/)
 - **Canvas**: [tldraw](https://tldraw.dev/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-
----
 
 ## 💻 Running the Project Locally
 
@@ -82,16 +64,12 @@ CollabBoard requires Supabase and Liveblocks to run. Setting up a local developm
 
    This will start the development server on port 5173, and you can access the project in your web browser at http://localhost:5173/.
 
----
-
 ## 🤝 Contributions
 
 CollabBoard is a complex project with backend dependencies (Supabase + Liveblocks). Contributions are welcome, but please note:
 
 - Setup requires a configured Supabase project, RLS policies, RPCs, and edge functions.
 - If you’re contributing, contact me to get figure out the exact setup.
-
----
 
 ## 🚀 Next Steps
 
