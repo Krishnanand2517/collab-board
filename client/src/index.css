@@ -27,6 +27,11 @@
   }
 }
 
+* {
+  font-family: "Outfit", sans-serif;
+  font-optical-sizing: auto;
+}
+
 html, body, #root {
   background: #0a0a0a;
   margin: 0;
