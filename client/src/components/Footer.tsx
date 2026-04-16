@@ -32,12 +32,12 @@ const Footer = () => {
       </div>
 
       <div className="text-center text-neutral-500 text-sm mt-8 font-light">
-        © 2026 CollabBoard. All rights reserved.
+        © 2026 CollabBoard.
         <br />
         <span className="text-neutral-400">
           Made with 🧡 by{" "}
           <a
-            href="https://krishnanand-yadav-portfolio.vercel.app/"
+            href="https://krishnanand.info"
             target="_blank"
             className="text-neutral-300 hover:underline hover:text-white transition-colors duration-200"
           >
