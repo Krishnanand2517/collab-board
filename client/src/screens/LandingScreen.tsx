@@ -125,7 +125,7 @@ const LandingScreen = () => {
             <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-200" />
           </Link>
           <a
-            href="https://youtu.be/TFns7vs7eS4"
+            href="https://youtu.be/gkhkIZREyLc"
             target="_blank"
             className="border border-neutral-700 text-white px-9 py-4 font-semibold text-base hover:border-neutral-600 hover:bg-neutral-900 transition-all duration-200 cursor-pointer group"
           >
@@ -259,7 +259,7 @@ const LandingScreen = () => {
               <ArrowRight className="w-5 h-5 ml-2 inline-block group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
             <a
-              href="https://youtu.be/TFns7vs7eS4"
+              href="https://youtu.be/gkhkIZREyLc"
               target="_blank"
               className="border border-neutral-700 text-white px-9 py-4 font-semibold text-base hover:border-neutral-600 hover:bg-neutral-900 transition-all duration-200 cursor-pointer"
             >
