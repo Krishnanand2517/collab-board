@@ -30,7 +30,7 @@ const WorkScreen = () => {
           </div>
         }
       >
-        <div className="fixed inset-0">
+        <div className="fixed inset-0 [&_*]:[font-family:initial]">
           <Workspace
             boardId={boardId || "collabboardpersistence"}
             boardName={boardName}
