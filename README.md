@@ -71,11 +71,4 @@ CollabBoard is a complex project with backend dependencies (Supabase + Liveblock
 - Setup requires a configured Supabase project, RLS policies, RPCs, and edge functions.
 - If you’re contributing, contact me to get figure out the exact setup.
 
-## 🚀 Next Steps
-
-- Share **images** on boards
-- Improve UI/UX **responsiveness** on mobile devices
-- Add **chats** & **annotation** system
-- **AI & Clustering** features
-
 **Happy coding!**

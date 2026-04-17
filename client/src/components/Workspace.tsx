@@ -6,7 +6,6 @@ import {
   type TLUiActionsContextType,
   type TLUiActionItem,
   type TLComponents,
-  getSnapshot,
   Editor,
 } from "tldraw";
 import "tldraw/tldraw.css";
@@ -89,17 +88,28 @@ const Workspace = ({
 
   const getWorkspaceImage = async (editor: Editor) => {
     const shapeIds = editor.getCurrentPageShapeIds();
+
     if (shapeIds.size === 0) return alert("No shapes on the canvas");
 
     const { blob } = await editor.toImage([...shapeIds], {
       format: "png",
-      quality: 0.8,
+      quality: 0.4,
       background: true,
       padding: 40,
     });
 
     const arrayBuffer = await blob.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+
+    const bytes = new Uint8Array(arrayBuffer);
+    let binary = "";
+    const chunkSize = 0x8000;
+
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode(...bytes.slice(i, i + chunkSize));
+    }
+
+    const base64 = btoa(binary);
+
     const dataUrl = `data:image/png;base64,${base64}`;
 
     return dataUrl;
@@ -110,8 +120,12 @@ const Workspace = ({
       throw new Error("No user found");
     }
 
-    const { document } = getSnapshot(editor.store);
-    const documentString = JSON.stringify(document);
+    const documentString = JSON.stringify(editor.store.serialize());
+
+    if (documentString.length > 5_000_000) {
+      console.warn("Snapshot too large");
+      return false;
+    }
 
     const previewImgUrl = await getWorkspaceImage(editor);
     if (!previewImgUrl) return false;
@@ -122,7 +136,7 @@ const Workspace = ({
         board_id: boardId,
         new_preview_img: previewImgUrl,
         new_snapshot: documentString,
-      }
+      },
     );
 
     if (documentError) {
