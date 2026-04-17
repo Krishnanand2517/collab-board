@@ -27,7 +27,7 @@
   }
 }
 
-* {
+html, body, #root, button, input {
   font-family: "Outfit", sans-serif;
   font-optical-sizing: auto;
 }
